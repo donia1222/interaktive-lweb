@@ -18,6 +18,15 @@
     color-scheme: dark;
   }
 
+  /* Móvil: la página no se puede arrastrar a los lados. Se recorta lo que sobresalga, sin rebote horizontal, y el dedo
+     solo desplaza en vertical; el zoom con dos dedos sigue permitido (pinch-zoom). */
+  html,
+  body {
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+    touch-action: pan-y pinch-zoom;
+  }
+
   html {
     background-color: var(--color-noche);
     color: var(--color-nieve);
