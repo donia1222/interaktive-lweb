@@ -30,7 +30,7 @@ export default function Branchen() {
           <div aria-hidden="true" className="w-[4vw] shrink-0 md:w-[30vw]" />
 
           {branchen.map((b, i) => (
-            <article key={b.id} data-branche data-portal={JSON.stringify(b.portal)} className="w-[80vw] max-w-[440px] shrink-0 md:w-[58vw] md:max-w-none">
+            <article key={b.id} data-branche data-portal={JSON.stringify(b.portal)} className="w-[86vw] max-w-[460px] shrink-0 md:w-[58vw] md:max-w-none">
               <div data-branche-buehne className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-noche ring-1 ring-nieve/10 md:aspect-video md:rounded-[2rem]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -64,7 +64,7 @@ export default function Branchen() {
                   <h3 className="text-2xl leading-tight md:text-4xl">{b.titel}</h3>
                   <p className="mt-2 max-w-xl text-sm text-nieve/65 md:text-base">{b.text}</p>
                 </div>
-                <ul className="flex flex-wrap gap-2 md:max-w-[15rem] md:justify-end">
+                <ul className="hidden flex-wrap gap-2 md:flex md:max-w-[15rem] md:justify-end">
                   {b.ideen.map((idee) => (
                     <li key={idee} className="rounded-full bg-nieve/[0.05] px-3 py-1.5 text-xs ring-1 ring-nieve/15">
                       {idee}
