@@ -1,23 +1,33 @@
-// "Hinter der Magie": el estudio a pantalla completa. El monitor reproduce el propio recorrido del hero y,
-// con el scroll, la cámara vuela hacia él hasta que llena la pantalla.
-// Pantalla del monitor en la foto (fracciones): ver data-monitor.
+// "Hinter der Magie": un solo travelling de cámara. La foto del estudio aparece entera, como un cuadro; con el
+// scroll crece hasta llenar la pantalla y la cámara sigue hasta el monitor, que reproduce el propio recorrido.
+// Por el camino pasan fichas de código junto a la cámara. El movimiento lo calcula src/scripts/secciones.ts (magie).
+
+// Pantalla del monitor en la foto (fracciones).
 const MONITOR = { x: 0.2, y: 0.318, w: 0.312, h: 0.316 };
 const escenas = ['1-handy', '2-tor', '3-galerie', '4-see'];
 
+// Fichas de código: posición en la foto (fracciones) y si se ven también en móvil.
+const fichas = [
+  { x: 0.6, y: 0.27, texto: 'kamera.zoom(4.2)', movil: true },
+  { x: 0.57, y: 0.6, texto: 'portal.öffnen({ weich: true })', movil: false },
+  { x: 0.06, y: 0.7, texto: '60 fps · auch auf dem Handy', movil: true },
+  { x: 0.05, y: 0.2, texto: '<Szene name="Studio" />', movil: false },
+];
+
 export default function Magie() {
   return (
-    <section data-bg="#06070f" data-magie aria-labelledby="magie-titel" className="relative h-[340svh]">
-      <div className="sticky top-0 h-svh overflow-hidden bg-noche">
+    <section data-bg="#06070f" data-magie aria-labelledby="magie-titel" className="relative h-[360svh]">
+      <div className="sticky top-0 h-svh overflow-hidden">
         <div
           data-magie-welt
           data-monitor={JSON.stringify(MONITOR)}
-          className="absolute top-1/2 left-1/2 aspect-video w-[max(100vw,177.78svh)] -translate-1/2 will-change-transform"
-          style={{ transformOrigin: `${(MONITOR.x + MONITOR.w / 2) * 100}% ${(MONITOR.y + MONITOR.h / 2) * 100}%` }}
+          className="absolute top-0 left-0 aspect-video w-screen origin-top-left overflow-hidden will-change-transform"
+          style={{ opacity: 0 }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/escenas/extra/studio.webp" alt="Unser Studio im Rheintal bei Nacht" loading="lazy" decoding="async" className="absolute inset-0 size-full object-cover" />
           <div
-            className="mini-portal absolute overflow-hidden rounded-[0.35%] bg-noche"
+            className="mini-portal absolute overflow-hidden bg-noche"
             style={{ left: `${MONITOR.x * 100}%`, top: `${MONITOR.y * 100}%`, width: `${MONITOR.w * 100}%`, height: `${MONITOR.h * 100}%` }}
           >
             {escenas.map((e) => (
@@ -26,15 +36,28 @@ export default function Magie() {
             ))}
             <span className="absolute inset-0 bg-linear-to-br from-nieve/10 via-transparent to-transparent" />
           </div>
+          {fichas.map((f) => (
+            <span
+              key={f.texto}
+              data-ficha
+              className={`absolute rounded-[0.4vw] bg-noche/70 px-[0.8vw] py-[0.45vw] font-mono text-[0.85vw] whitespace-nowrap text-nieve/90 opacity-0 ring-1 ring-akzent/40 shadow-[0_0_2vw_rgba(242,180,109,0.25)] ${f.movil ? '' : 'max-md:hidden'}`}
+              style={{ left: `${f.x * 100}%`, top: `${f.y * 100}%` }}
+            >
+              <span className="text-akzent">›</span> {f.texto}
+            </span>
+          ))}
         </div>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-linear-to-t from-noche via-noche/20 to-noche/50" />
+        {/* Velo para leer el texto final sobre el monitor. */}
+        <div data-magie-velo aria-hidden="true" className="pointer-events-none absolute inset-0 bg-linear-to-t from-noche via-noche/40 to-noche/10 opacity-0" />
 
-        <div data-magie-antes className="absolute inset-x-0 bottom-[9%] px-6 text-center md:bottom-auto md:left-auto md:top-1/2 md:right-[6%] md:w-[38%] md:-translate-y-1/2 md:px-0 md:text-left">
-          <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Hinter der Magie</p>
-          <h2 id="magie-titel" className="mt-4 text-5xl leading-[0.95] md:text-6xl">
-            Von Hand programmiert, <em className="text-akzent">im Rheintal</em>
-          </h2>
-          <p className="mx-auto mt-5 max-w-md text-base text-nieve/75 md:mx-0">
+        <div data-magie-antes className="pointer-events-none absolute inset-0">
+          <div data-magie-kopf className="absolute inset-x-0 px-6 text-center">
+            <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Hinter der Magie</p>
+            <h2 id="magie-titel" className="mt-3 text-4xl leading-[0.95] md:text-6xl">
+              Von Hand programmiert, <em className="text-akzent">im Rheintal</em>
+            </h2>
+          </div>
+          <p data-magie-fuss className="absolute inset-x-0 mx-auto max-w-lg px-6 text-center text-base text-nieve/70 md:text-lg">
             Kein Baukasten, keine Vorlage. Jede Szene und jeder Übergang entsteht in unserem Studio in Sevelen.
           </p>
         </div>

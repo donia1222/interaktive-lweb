@@ -348,41 +348,79 @@ function branchen() {
   });
 }
 
-// Hinter der Magie: la cámara vuela hacia el monitor del estudio hasta que su pantalla llena la vista.
+// Hinter der Magie: un solo travelling. La cámara es un rectángulo sobre la foto (centro y escala) que va de "la foto
+// entera, como un cuadro en el centro" a "el monitor llenando la pantalla". La escala crece de forma geométrica, como en
+// el hero, y el centro avanza al mismo ritmo que el zoom, así el monitor se acerca sin desplazamientos raros.
 function magie() {
   const seccion = document.querySelector<HTMLElement>('[data-magie]');
   const welt = document.querySelector<HTMLElement>('[data-magie-welt]');
+  const kopf = document.querySelector<HTMLElement>('[data-magie-kopf]');
+  const fuss = document.querySelector<HTMLElement>('[data-magie-fuss]');
   if (!seccion || !welt) return;
   const m = JSON.parse(welt.dataset.monitor ?? '{}') as { x: number; y: number; w: number; h: number };
-  const cx = m.x + m.w / 2;
-  const cy = m.y + m.h / 2;
-  // Medidas del marco 16:9 que cubre la pantalla y del centro del monitor dentro de la vista.
+  const fichas = [...welt.querySelectorAll<HTMLElement>('[data-ficha]')];
+  const estado = { e: 0 };
+  let W = 0;
+  let H = 0;
+  let Wd = 0;
+  let Hd = 0;
+  let s0 = 1;
+  let s1 = 1;
+
   const medir = () => {
-    const W = window.innerWidth;
-    const H = (welt.parentElement as HTMLElement).clientHeight;
-    const boxW = Math.max(W, (H * 16) / 9);
-    const boxH = (boxW * 9) / 16;
-    const left = (W - boxW) / 2;
-    const top = (H - boxH) / 2;
-    const ox = left + cx * boxW;
-    const oy = top + cy * boxH;
-    // Al empezar, desplazar lo justo para acercar el monitor al centro sin dejar huecos en los bordes
-    // (en móvil la foto se recorta por los lados y el monitor quedaría fuera).
-    const x0 = gsap.utils.clamp(W - left - boxW, -left, W / 2 - ox);
-    const escala = 1.06 * Math.max(W / (m.w * boxW), H / (m.h * boxH));
-    return { x0, x1: W / 2 - ox, y1: H / 2 - oy, escala };
+    W = window.innerWidth;
+    H = (welt.parentElement as HTMLElement).clientHeight;
+    Wd = welt.offsetWidth;
+    Hd = welt.offsetHeight;
+    // Al empezar: la foto entera, como un cuadro con aire para el titular arriba y el texto abajo.
+    s0 = Math.min((0.88 * W) / Wd, (0.58 * H) / Hd);
+    // Al terminar: la pantalla del monitor cubre la vista.
+    s1 = 1.04 * Math.max(W / (m.w * Wd), H / (m.h * Hd));
+    // Titular y texto pegados al cuadro inicial.
+    const alto = Hd * s0;
+    if (kopf) kopf.style.bottom = `${(H + alto) / 2 + 28}px`;
+    if (fuss) fuss.style.top = `${(H + alto) / 2 + 24}px`;
+    pintar();
   };
-  let med = medir();
+
+  const pintar = () => {
+    const e = estado.e;
+    const s = s0 * Math.pow(s1 / s0, e);
+    // El centro avanza al ritmo del zoom (no del tiempo): primero crece el cuadro, después se acerca al monitor.
+    const f = (s - s0) / (s1 - s0);
+    const cx = 0.5 + (m.x + m.w / 2 - 0.5) * f;
+    const cy = 0.5 + (m.y + m.h / 2 - 0.5) * f;
+    const tx = W / 2 - s * cx * Wd;
+    const ty = H / 2 - s * cy * Hd;
+    welt.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${s})`;
+    // Esquinas redondeadas del cuadro que se enderezan al llenar la pantalla (el radio se compensa con la escala).
+    welt.style.borderRadius = `${(28 * Math.max(0, 1 - e * 3)) / s}px`;
+    // Fichas de código: aparecen al acercarse y se desvanecen al pasar junto a la cámara.
+    const vis = gsap.utils.clamp(0, 1, (e - 0.12) / 0.15) * (1 - gsap.utils.clamp(0, 1, (e - 0.55) / 0.2));
+    fichas.forEach((ficha, i) => {
+      ficha.style.opacity = String(vis);
+      ficha.style.transform = `translateY(${(1 - vis) * 12 + i * e * -6}px)`;
+    });
+  };
+
+  welt.style.opacity = '1';
+  welt.style.boxShadow = '0 40px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08)';
+  medir();
+  window.addEventListener('resize', medir);
+  ScrollTrigger.addEventListener('refresh', medir);
+
   // El bucle del monitor solo se reproduce mientras la sección está a la vista.
   const mini = [...welt.querySelectorAll<HTMLElement>('.mini-portal img')];
   const reproducir = (si: boolean) => mini.forEach((img) => (img.style.animationPlayState = si ? 'running' : 'paused'));
   reproducir(false);
   ScrollTrigger.create({ trigger: seccion, start: 'top bottom', end: 'bottom top', onToggle: (self) => reproducir(self.isActive) });
-  ScrollTrigger.addEventListener('refreshInit', () => (med = medir()));
+
   gsap
-    .timeline({ scrollTrigger: { trigger: seccion, start: 'top top', end: 'bottom bottom', scrub: 1, invalidateOnRefresh: true } })
-    .fromTo(welt, { x: () => med.x0, y: 0, scale: 1 }, { x: () => med.x1, y: () => med.y1, scale: () => med.escala, ease: 'power3.in', duration: 0.7 }, 0.18)
-    .to('[data-magie-antes]', { opacity: 0, y: -30, duration: 0.14 }, 0.16)
+    .timeline({ scrollTrigger: { trigger: seccion, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+    .to('[data-magie-antes]', { opacity: 0, y: -30, duration: 0.12 }, 0.14)
+    .to(estado, { e: 1, ease: 'power1.inOut', duration: 0.66, onUpdate: pintar }, 0.12)
+    .to(welt, { boxShadow: '0 0 0 0 rgba(0,0,0,0)', duration: 0.2 }, 0.2)
+    .to('[data-magie-velo]', { opacity: 1, duration: 0.1 }, 0.8)
     .to('[data-magie-despues]', { opacity: 1, duration: 0.1 }, 0.82)
     .from('[data-magie-despues] > *', { y: 50, stagger: 0.04, duration: 0.14 }, 0.82);
 }
