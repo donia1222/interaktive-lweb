@@ -74,6 +74,8 @@ export default function Branchen() {
               </div>
             </article>
           ))}
+          {/* Espacio final: la última tarjeta termina centrada en la pantalla. */}
+          <div aria-hidden="true" className="w-0 shrink-0 md:w-[13vw]" />
         </div>
 
         <div className="mx-6 mt-8 h-px bg-nieve/10 md:mx-12 md:mt-12">

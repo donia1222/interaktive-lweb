@@ -333,7 +333,9 @@ function branchen() {
     },
   });
   const movil = !matchMedia('(min-width: 768px)').matches;
-  document.querySelectorAll<HTMLElement>('[data-branche]').forEach((tarjeta) => {
+  const tarjetas = document.querySelectorAll<HTMLElement>('[data-branche]');
+  tarjetas.forEach((tarjeta, i) => {
+    const ultima = i === tarjetas.length - 1;
     const buehne = tarjeta.querySelector<HTMLElement>('[data-branche-buehne]');
     const aussen = tarjeta.querySelector<HTMLElement>('[data-branche-aussen]');
     const innen = tarjeta.querySelector<HTMLElement>('[data-branche-innen]');
@@ -375,8 +377,9 @@ function branchen() {
         scrollTrigger: {
           trigger: tarjeta,
           containerAnimation: recorrido,
-          start: movil ? 'left 18%' : 'left 45%',
-          end: movil ? 'center 22%' : 'center 35%',
+          // La última no puede pasar del centro (la galería termina ahí), así que se abre entre su llegada y el final.
+          start: ultima ? (movil ? 'left 45%' : 'left 50%') : movil ? 'left 18%' : 'left 45%',
+          end: ultima ? (movil ? 'left 9%' : 'left 23%') : movil ? 'center 22%' : 'center 35%',
           scrub: true,
         },
       })
