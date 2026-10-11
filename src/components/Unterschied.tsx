@@ -3,23 +3,23 @@
 export default function Unterschied() {
   return (
     <section data-bg="#090b17" data-unterschied aria-labelledby="unterschied-titel" className="relative h-[320svh]">
-      <div className="sticky top-0 flex h-svh flex-col items-center justify-center gap-6 overflow-hidden px-5 md:gap-8">
+      <div className="sticky top-0 flex h-svh flex-col items-center justify-center gap-4 overflow-hidden px-5 pt-20 pb-6 md:gap-8 md:pt-0 md:pb-0">
         <div className="text-center">
           <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Der Unterschied</p>
-          <h2 id="unterschied-titel" data-split className="mt-3 text-4xl leading-[0.95] md:text-6xl">
+          <h2 id="unterschied-titel" data-split className="mt-3 text-3xl leading-[0.95] md:text-6xl">
             Gleicher Inhalt. <em className="text-akzent">Ganz andere Wirkung.</em>
           </h2>
         </div>
 
-        <div className="relative w-[min(78vw,360px)] md:w-[min(88vw,1040px)]">
+        <div className="relative w-[min(78vw,360px,33svh)] md:w-[min(88vw,1040px)]">
           <div className="geraet overflow-hidden rounded-[1.6rem] bg-[#0d1020] ring-1 ring-nieve/15 md:rounded-2xl">
             <div className="flex h-8 items-center gap-1.5 border-b border-nieve/10 bg-[#0a0d1a] px-4">
               <i className="size-2 rounded-full bg-[#ff5f57]" />
               <i className="size-2 rounded-full bg-[#febc2e]" />
               <i className="size-2 rounded-full bg-[#28c840]" />
-              <span className="mx-auto font-mono text-[10px] text-nieve/45">restaurant-alpenblick.ch</span>
+              <span className="mx-auto truncate font-mono text-[9px] whitespace-nowrap text-nieve/45 md:text-[10px]">restaurant-alpenblick.ch</span>
             </div>
-            <div className="relative aspect-[10/14] max-h-[56svh] w-full overflow-hidden md:aspect-video md:max-h-none">
+            <div className="relative aspect-[10/14] max-h-[46svh] w-full overflow-hidden md:aspect-video md:max-h-none">
               {/* Versión normal: plantilla gris, todo quieto. */}
               <div className="web-normal absolute inset-0 flex flex-col bg-[#f3f3f1] text-[#2b2b2b]">
                 <div className="flex items-center justify-between border-b border-black/10 px-4 py-2.5 md:px-6">

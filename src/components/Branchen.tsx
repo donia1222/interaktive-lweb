@@ -11,7 +11,7 @@ const recorte = (p: { x: number; y: number; r: number; w?: number; h?: number })
 export default function Branchen() {
   return (
     <section id="branchen" data-bg="#0b0a16" data-branchen aria-labelledby="branchen-titel" className="relative">
-      <div data-branchen-pin className="relative flex h-svh flex-col justify-center overflow-hidden">
+      <div data-branchen-pin className="relative flex h-svh flex-col justify-center overflow-hidden pt-24 md:pt-0">
         <div data-branchen-pista className="flex w-max items-center gap-6 pr-[8vw] pl-6 md:gap-10 md:pl-12">
           <div className="w-[80vw] shrink-0 md:w-[38vw]">
             <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Branchen</p>
@@ -30,7 +30,7 @@ export default function Branchen() {
           <div aria-hidden="true" className="w-[4vw] shrink-0 md:w-[30vw]" />
 
           {branchen.map((b, i) => (
-            <article key={b.id} data-branche data-portal={JSON.stringify(b.portal)} className="w-[80vw] max-w-[440px] shrink-0 md:w-[58vw] md:max-w-none">
+            <article key={b.id} data-branche data-portal={JSON.stringify(b.portal)} className="w-[min(80vw,30svh)] max-w-[440px] shrink-0 md:w-[58vw] md:max-w-none">
               <div data-branche-buehne className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-noche ring-1 ring-nieve/10 md:aspect-video md:rounded-[2rem]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
