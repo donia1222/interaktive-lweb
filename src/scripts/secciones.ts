@@ -332,6 +332,7 @@ function branchen() {
       onUpdate: (self) => barra && (barra.style.transform = `scaleX(${self.progress})`),
     },
   });
+  const movil = !matchMedia('(min-width: 768px)').matches;
   document.querySelectorAll<HTMLElement>('[data-branche]').forEach((tarjeta) => {
     const buehne = tarjeta.querySelector<HTMLElement>('[data-branche-buehne]');
     const aussen = tarjeta.querySelector<HTMLElement>('[data-branche-aussen]');
@@ -368,7 +369,17 @@ function branchen() {
     medir();
     new ResizeObserver(medir).observe(buehne);
     gsap
-      .timeline({ scrollTrigger: { trigger: tarjeta, containerAnimation: recorrido, start: 'left 85%', end: 'center 50%', scrub: true } })
+      // El portal no empieza a abrirse hasta que la tarjeta está casi centrada: antes se ve la foto de fuera entera.
+      // En móvil la tarjeta ocupa casi toda la pantalla, así que espera a que su borde izquierdo llegue cerca del margen.
+      .timeline({
+        scrollTrigger: {
+          trigger: tarjeta,
+          containerAnimation: recorrido,
+          start: movil ? 'left 18%' : 'left 45%',
+          end: movil ? 'center 22%' : 'center 35%',
+          scrub: true,
+        },
+      })
       .to(aussen, { scale: 2.6, ease: 'power2.in', duration: 1 }, 0)
       .to(innen, { opacity: 1, ease: 'none', duration: 0.2 }, 0.2)
       .to(estado, { abre: 1, ease: 'power2.in', duration: 0.7, onUpdate: pintar }, 0.3)
