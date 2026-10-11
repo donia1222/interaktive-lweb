@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-geist), sans-serif;
+  --font-sans: var(--font-geist), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+@theme {
+  --color-noche: #070a14;
+  --color-nieve: #eef1f6;
+  --color-akzent: #f2b46d;
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    background-color: var(--color-noche);
+    color: var(--color-nieve);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-noche);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* El acento de los titulares: latón, sin cursiva. */
+  em {
+    font-style: normal;
+  }
+
+  ::selection {
+    background-color: var(--color-akzent);
+    color: var(--color-noche);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-akzent);
+    outline-offset: 4px;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    border-radius: 9999px;
+    padding: 10px 20px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition:
+      background-color 700ms var(--ease-fluid),
+      color 700ms var(--ease-fluid),
+      transform 700ms var(--ease-fluid);
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-akzent {
+    background-color: var(--color-akzent);
+    color: var(--color-noche);
+  }
+
+  .btn-akzent:hover {
+    background-color: var(--color-nieve);
+  }
+
+  .btn-cristal {
+    background-color: color-mix(in oklab, var(--color-noche) 70%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-nieve) 22%, transparent);
+  }
+
+  /* El desenfoque del fondo solo en escritorio: en móvil, sobre elementos fijos, se recalcula en cada frame. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn-cristal {
+      background-color: color-mix(in oklab, var(--color-nieve) 8%, transparent);
+      backdrop-filter: blur(16px);
+    }
+  }
+
+  .btn-cristal:hover {
+    background-color: var(--color-nieve);
+    color: var(--color-noche);
+  }
+
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(3rem);
+    filter: blur(10px);
+    transition:
+      opacity 1000ms var(--ease-fluid),
+      transform 1000ms var(--ease-fluid),
+      filter 1000ms var(--ease-fluid);
+    transition-delay: var(--d, 0ms);
+  }
+
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Texto de cada parada: aparece desenfocado y se enfoca cuando la parada es la actual. */
+.js .stop-body > * {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  filter: blur(8px);
+  transition:
+    opacity 700ms var(--ease-fluid),
+    transform 700ms var(--ease-fluid),
+    filter 700ms var(--ease-fluid);
+}
+
+.js .stop.is-current .stop-body > *,
+.js .stop-body:focus-within > * {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition-duration: 1200ms;
+}
+
+.stop.is-current .stop-body > :nth-child(2) { transition-delay: 80ms; }
+.stop.is-current .stop-body > :nth-child(3) { transition-delay: 160ms; }
+.stop.is-current .stop-body > :nth-child(4) { transition-delay: 240ms; }
+
+.js .stop:not(.is-current) .stop-body:not(:focus-within) {
+  pointer-events: none;
+}
+
+.hint-dot {
+  animation: hint 2200ms var(--ease-fluid) infinite;
+}
+
+@keyframes hint {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
+
+/* Palabras del manifiesto: apagadas hasta que el scroll las enciende. */
+.word {
+  color: color-mix(in oklab, var(--color-nieve) 18%, transparent);
+  transition: color 600ms var(--ease-fluid);
+}
+
+.word.is-lit {
+  color: var(--color-nieve);
+}
+
+/* Paso activo del "cómo está hecho". */
+[data-paso] {
+  opacity: 0.45;
+  transition:
+    opacity 700ms var(--ease-fluid),
+    background-color 700ms var(--ease-fluid),
+    box-shadow 700ms var(--ease-fluid);
+}
+
+[data-paso].is-activo {
+  opacity: 1;
+  background-color: color-mix(in oklab, var(--color-akzent) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-akzent) 45%, transparent);
+}
+
+.grano {
+  display: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Grano solo en escritorio: una capa fija con modo de fusión encima de todo es cara en móvil. */
+@media (hover: hover) and (pointer: fine) {
+  .grano {
+    display: block;
+  }
+}
+
+/* En pantallas táctiles, entradas sin desenfoque animado: se nota poco y cuesta mucho al hacer scroll rápido. */
+@media (pointer: coarse) {
+  .js [data-reveal],
+  .js .stop-body > * {
+    filter: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-paso] {
+    opacity: 1;
+  }
+
+  .js [data-reveal],
+  .js .stop-body > * {
+    transform: none;
+    filter: none;
+  }
+
+  .hint-dot {
+    animation: none;
+  }
+}
