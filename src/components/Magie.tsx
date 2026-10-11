@@ -2,8 +2,17 @@
 // scroll crece hasta llenar la pantalla y la cámara sigue hasta el monitor, que reproduce el propio recorrido.
 // Por el camino pasan fichas de código junto a la cámara. El movimiento lo calcula src/scripts/secciones.ts (magie).
 
-// Pantalla del monitor en la foto (fracciones).
-const MONITOR = { x: 0.2, y: 0.318, w: 0.312, h: 0.316 };
+// Pantalla del monitor en la foto (fracciones). El monitor está un poco girado, así que la imagen se encaja en sus
+// cuatro esquinas reales con una transformación de perspectiva (ver magie() en secciones.ts).
+// Orden: arriba-izquierda, arriba-derecha, abajo-derecha, abajo-izquierda; medidas sobre imagenes/extra/studio.png.
+const ESQUINAS = [
+  [0.1968, 0.3294],
+  [0.5135, 0.3135],
+  [0.5114, 0.6286],
+  [0.1929, 0.611],
+];
+// Rectángulo que cabe entero dentro de la pantalla: hacia él vuela la cámara.
+const MONITOR = { x: 0.198, y: 0.331, w: 0.312, h: 0.279 };
 const escenas = ['1-handy', '2-tor', '3-galerie', '4-see'];
 
 // Fichas de código: posición en la foto (fracciones) y si se ven también en móvil.
@@ -21,12 +30,14 @@ export default function Magie() {
         <div
           data-magie-welt
           data-monitor={JSON.stringify(MONITOR)}
+          data-esquinas={JSON.stringify(ESQUINAS)}
           className="absolute top-0 left-0 aspect-video w-screen origin-top-left overflow-hidden will-change-transform"
           style={{ opacity: 0 }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/escenas/extra/studio.webp" alt="Unser Studio im Rheintal bei Nacht" loading="lazy" decoding="async" className="absolute inset-0 size-full object-cover" />
           <div
+            data-mini
             className="mini-portal absolute overflow-hidden bg-noche"
             style={{ left: `${MONITOR.x * 100}%`, top: `${MONITOR.y * 100}%`, width: `${MONITOR.w * 100}%`, height: `${MONITOR.h * 100}%` }}
           >
@@ -45,6 +56,14 @@ export default function Magie() {
             >
               <span className="text-akzent">›</span> {f.texto}
             </span>
+          ))}
+        </div>
+        {/* El mismo bucle a pantalla completa y resolución nativa: aparece cuando el monitor llena la pantalla, para que
+            las escenas se vean tan nítidas como en el hero (el monitor ampliado se vería pixelado). */}
+        <div data-magie-voll aria-hidden="true" className="mini-portal pointer-events-none absolute inset-0 opacity-0">
+          {escenas.map((e) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={e} src={`/escenas/hero/${e}.webp`} alt="" loading="lazy" decoding="async" />
           ))}
         </div>
         {/* Velo para leer el texto final sobre el monitor. */}

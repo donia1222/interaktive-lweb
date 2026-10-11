@@ -380,6 +380,7 @@ function magie() {
     const alto = Hd * s0;
     if (kopf) kopf.style.bottom = `${(H + alto) / 2 + 28}px`;
     if (fuss) fuss.style.top = `${(H + alto) / 2 + 24}px`;
+    encajar();
     pintar();
   };
 
@@ -403,6 +404,26 @@ function magie() {
     });
   };
 
+  // Encaja la imagen del monitor en sus cuatro esquinas con una homografía (matrix3d), un pelín hacia dentro del marco.
+  const mini = welt.querySelector<HTMLElement>('[data-mini]');
+  const esquinas = JSON.parse(welt.dataset.esquinas ?? '[]') as [number, number][];
+  const encajar = () => {
+    if (!mini || esquinas.length !== 4) return;
+    const cx = esquinas.reduce((t, q) => t + q[0], 0) / 4;
+    const cy = esquinas.reduce((t, q) => t + q[1], 0) / 4;
+    const [p0, p1, p2, p3] = esquinas.map(([x, y]) => [(cx + (x - cx) * 0.985) * Wd, (cy + (y - cy) * 0.98) * Hd]);
+    const dx1 = p1[0] - p2[0], dx2 = p3[0] - p2[0], dx3 = p0[0] - p1[0] + p2[0] - p3[0];
+    const dy1 = p1[1] - p2[1], dy2 = p3[1] - p2[1], dy3 = p0[1] - p1[1] + p2[1] - p3[1];
+    const det = dx1 * dy2 - dx2 * dy1;
+    const g = (dx3 * dy2 - dx2 * dy3) / det;
+    const h = (dx1 * dy3 - dx3 * dy1) / det;
+    const a = p1[0] - p0[0] + g * p1[0], b = p3[0] - p0[0] + h * p3[0], c = p0[0];
+    const d = p1[1] - p0[1] + g * p1[1], e = p3[1] - p0[1] + h * p3[1], f = p0[1];
+    // El elemento ocupa toda la foto (Wd × Hd); la homografía va del cuadrado unidad a las esquinas.
+    Object.assign(mini.style, { left: '0', top: '0', width: `${Wd}px`, height: `${Hd}px`, transformOrigin: '0 0', borderRadius: '0' });
+    mini.style.transform = `matrix3d(${a / Wd},${d / Wd},0,${g / Wd},${b / Hd},${e / Hd},0,${h / Hd},0,0,1,0,${c},${f},0,1)`;
+  };
+
   welt.style.opacity = '1';
   welt.style.boxShadow = '0 40px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08)';
   medir();
@@ -410,8 +431,9 @@ function magie() {
   ScrollTrigger.addEventListener('refresh', medir);
 
   // El bucle del monitor solo se reproduce mientras la sección está a la vista.
-  const mini = [...welt.querySelectorAll<HTMLElement>('.mini-portal img')];
-  const reproducir = (si: boolean) => mini.forEach((img) => (img.style.animationPlayState = si ? 'running' : 'paused'));
+  // Incluye la copia a pantalla completa: las dos van en pausa y en marcha a la vez, así siguen sincronizadas.
+  const bucle = [...seccion.querySelectorAll<HTMLElement>('.mini-portal img')];
+  const reproducir = (si: boolean) => bucle.forEach((img) => (img.style.animationPlayState = si ? 'running' : 'paused'));
   reproducir(false);
   ScrollTrigger.create({ trigger: seccion, start: 'top bottom', end: 'bottom top', onToggle: (self) => reproducir(self.isActive) });
 
@@ -420,6 +442,7 @@ function magie() {
     .to('[data-magie-antes]', { opacity: 0, y: -30, duration: 0.12 }, 0.14)
     .to(estado, { e: 1, ease: 'power1.inOut', duration: 0.66, onUpdate: pintar }, 0.12)
     .to(welt, { boxShadow: '0 0 0 0 rgba(0,0,0,0)', duration: 0.2 }, 0.2)
+    .to('[data-magie-voll]', { opacity: 1, ease: 'none', duration: 0.08 }, 0.7)
     .to('[data-magie-velo]', { opacity: 1, duration: 0.1 }, 0.8)
     .to('[data-magie-despues]', { opacity: 1, duration: 0.1 }, 0.82)
     .from('[data-magie-despues] > *', { y: 50, stagger: 0.04, duration: 0.14 }, 0.82);
