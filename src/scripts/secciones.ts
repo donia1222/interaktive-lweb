@@ -12,14 +12,20 @@ export function initSecciones(reduceMotion: boolean) {
     return;
   }
   titulares();
+  // En el orden de la página: las secciones fijadas (pin) añaden altura, y lo que va debajo debe calcularse después.
   manifiesto();
-  galeria();
-  revelado();
-  cifras();
-  cinta();
-  diagrama();
+  unterschied();
   branchen();
+  magie();
+  ablauf();
+  cinta();
+  revelado();
   pie();
+  luz();
+  magnet();
+  // Los triggers creados antes (fondos, palabras) se reordenan por posición y se recalculan con los pins ya puestos.
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
 }
 
 // Formato suizo: 28'800.
@@ -249,31 +255,197 @@ function pie() {
   });
 }
 
-// Branchen: la imagen de fuera se acerca a su portal y la de dentro se abre en círculo, con el scroll.
+// Der Unterschied: una línea de luz barre la web normal y deja ver la interactiva; el texto de abajo cambia con ella.
+function unterschied() {
+  const seccion = document.querySelector('[data-unterschied]');
+  const capa = document.querySelector<HTMLElement>('[data-unterschied-interaktiv]');
+  const linie = document.querySelector<HTMLElement>('[data-unterschied-linie]');
+  if (!seccion || !capa || !linie) return;
+  const estado = { corte: 100 };
+  const pintar = () => {
+    capa.style.clipPath = `inset(0 0 0 ${estado.corte}%)`;
+    linie.style.left = `${estado.corte}%`;
+  };
+  gsap
+    .timeline({ scrollTrigger: { trigger: seccion, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+    .to(estado, { corte: 0, ease: 'power1.inOut', duration: 0.7, onUpdate: pintar }, 0.12)
+    .fromTo('[data-unterschied-bild]', { scale: 1.6 }, { scale: 1, ease: 'power2.out', duration: 0.9 }, 0.1)
+    .to(linie, { opacity: 0, duration: 0.08 }, 0.8)
+    .to('[data-unterschied-normal]', { opacity: 0, y: -12, duration: 0.12 }, 0.4)
+    .fromTo('[data-unterschied-wow]', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.12 }, 0.46);
+}
+
+// Branchen: galería horizontal fija. El portal de cada sector se abre mientras su tarjeta cruza el centro.
 function branchen() {
+  const pin = document.querySelector<HTMLElement>('[data-branchen-pin]');
+  const pista = document.querySelector<HTMLElement>('[data-branchen-pista]');
+  const barra = document.querySelector<HTMLElement>('[data-branchen-barra]');
+  if (!pin || !pista) return;
+  const distancia = () => pista.scrollWidth - window.innerWidth;
+  const recorrido = gsap.to(pista, {
+    x: () => -distancia(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: pin,
+      start: 'top top',
+      // Más recorrido de scroll que de píxeles: da tiempo a ver abrirse cada portal.
+      end: () => `+=${distancia() * 1.6}`,
+      pin: true,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => barra && (barra.style.transform = `scaleX(${self.progress})`),
+    },
+  });
   document.querySelectorAll<HTMLElement>('[data-branche]').forEach((tarjeta) => {
+    const buehne = tarjeta.querySelector<HTMLElement>('[data-branche-buehne]');
     const aussen = tarjeta.querySelector<HTMLElement>('[data-branche-aussen]');
     const innen = tarjeta.querySelector<HTMLElement>('[data-branche-innen]');
-    if (!aussen || !innen) return;
-    const r = Number(innen.dataset.r) * 100;
-    const w = Number(innen.dataset.w || 0);
-    const h = Number(innen.dataset.h || 0);
-    const [ox, oy] = aussen.style.transformOrigin.split(' ').map((v) => parseFloat(v) / 100);
-    const estado = { r, abre: 0 };
+    const texto = tarjeta.querySelector<HTMLElement>('[data-branche-text]');
+    if (!buehne || !aussen || !innen) return;
+    const p = JSON.parse(tarjeta.dataset.portal ?? '{}') as { x: number; y: number; r: number; w?: number; h?: number };
+    const estado = { abre: 0 };
+    // El portal se calcula en píxeles: en móvil la tarjeta es vertical y la foto (16:9, object-cover) se recorta por
+    // los lados, así que las fracciones de la foto no coinciden con las de la tarjeta.
+    let geo = { bw: 0, bh: 0, px: 0, py: 0, r: 0, w: 0, h: 0 };
+    const medir = () => {
+      const bw = buehne.clientWidth;
+      const bh = buehne.clientHeight;
+      const iw = Math.max(bw, (bh * 16) / 9);
+      const ih = (iw * 9) / 16;
+      const px = (bw - iw) / 2 + p.x * iw;
+      const py = (bh - ih) / 2 + p.y * ih;
+      geo = { bw, bh, px, py, r: p.r * iw, w: (p.w ?? 0) * iw, h: (p.h ?? 0) * ih };
+      aussen.style.transformOrigin = innen.style.transformOrigin = `${px}px ${py}px`;
+      pintar();
+    };
     // Círculo que crece o, si el portal es un rectángulo (el ventanal de la casa), un recorte que se abre hacia los bordes.
     const pintar = () => {
+      const { bw, bh, px, py, r, w, h } = geo;
+      const k = 1 - estado.abre;
       if (w && h) {
-        const k = 1 - estado.abre;
-        innen.style.clipPath = `inset(${(oy - h / 2) * 100 * k}% ${(1 - ox - w / 2) * 100 * k}% ${(1 - oy - h / 2) * 100 * k}% ${(ox - w / 2) * 100 * k}% round ${12 * k}px)`;
+        innen.style.clipPath = `inset(${(py - h / 2) * k}px ${(bw - px - w / 2) * k}px ${(bh - py - h / 2) * k}px ${(px - w / 2) * k}px round ${12 * k}px)`;
       } else {
-        innen.style.clipPath = `circle(${estado.r}% at ${ox * 100}% ${oy * 100}%)`;
+        const lejos = Math.hypot(Math.max(px, bw - px), Math.max(py, bh - py));
+        innen.style.clipPath = `circle(${r + (lejos - r) * estado.abre}px at ${px}px ${py}px)`;
       }
     };
+    medir();
+    new ResizeObserver(medir).observe(buehne);
     gsap
-      .timeline({ scrollTrigger: { trigger: tarjeta, start: 'top 75%', end: 'center 35%', scrub: 1 } })
+      .timeline({ scrollTrigger: { trigger: tarjeta, containerAnimation: recorrido, start: 'left 85%', end: 'center 50%', scrub: true } })
       .to(aussen, { scale: 2.6, ease: 'power2.in', duration: 1 }, 0)
-      .to(innen, { opacity: 1, ease: 'none', duration: 0.25 }, 0.15)
-      .to(estado, { r: 80, abre: 1, ease: 'power2.in', duration: 0.75, onUpdate: pintar }, 0.25)
-      .fromTo(innen, { scale: 1.25 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+      .to(innen, { opacity: 1, ease: 'none', duration: 0.2 }, 0.2)
+      .to(estado, { abre: 1, ease: 'power2.in', duration: 0.7, onUpdate: pintar }, 0.3)
+      .fromTo(innen, { scale: 1.3 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+    if (texto) {
+      gsap.from(texto, {
+        opacity: 0,
+        y: 30,
+        ease: 'none',
+        scrollTrigger: { trigger: tarjeta, containerAnimation: recorrido, start: 'left 70%', end: 'left 40%', scrub: true },
+      });
+    }
+  });
+}
+
+// Hinter der Magie: la cámara vuela hacia el monitor del estudio hasta que su pantalla llena la vista.
+function magie() {
+  const seccion = document.querySelector<HTMLElement>('[data-magie]');
+  const welt = document.querySelector<HTMLElement>('[data-magie-welt]');
+  if (!seccion || !welt) return;
+  const m = JSON.parse(welt.dataset.monitor ?? '{}') as { x: number; y: number; w: number; h: number };
+  const cx = m.x + m.w / 2;
+  const cy = m.y + m.h / 2;
+  // Medidas del marco 16:9 que cubre la pantalla y del centro del monitor dentro de la vista.
+  const medir = () => {
+    const W = window.innerWidth;
+    const H = (welt.parentElement as HTMLElement).clientHeight;
+    const boxW = Math.max(W, (H * 16) / 9);
+    const boxH = (boxW * 9) / 16;
+    const left = (W - boxW) / 2;
+    const top = (H - boxH) / 2;
+    const ox = left + cx * boxW;
+    const oy = top + cy * boxH;
+    // Al empezar, desplazar lo justo para acercar el monitor al centro sin dejar huecos en los bordes
+    // (en móvil la foto se recorta por los lados y el monitor quedaría fuera).
+    const x0 = gsap.utils.clamp(W - left - boxW, -left, W / 2 - ox);
+    const escala = 1.06 * Math.max(W / (m.w * boxW), H / (m.h * boxH));
+    return { x0, x1: W / 2 - ox, y1: H / 2 - oy, escala };
+  };
+  let med = medir();
+  // El bucle del monitor solo se reproduce mientras la sección está a la vista.
+  const mini = [...welt.querySelectorAll<HTMLElement>('.mini-portal img')];
+  const reproducir = (si: boolean) => mini.forEach((img) => (img.style.animationPlayState = si ? 'running' : 'paused'));
+  reproducir(false);
+  ScrollTrigger.create({ trigger: seccion, start: 'top bottom', end: 'bottom top', onToggle: (self) => reproducir(self.isActive) });
+  ScrollTrigger.addEventListener('refreshInit', () => (med = medir()));
+  gsap
+    .timeline({ scrollTrigger: { trigger: seccion, start: 'top top', end: 'bottom bottom', scrub: 1, invalidateOnRefresh: true } })
+    .fromTo(welt, { x: () => med.x0, y: 0, scale: 1 }, { x: () => med.x1, y: () => med.y1, scale: () => med.escala, ease: 'power3.in', duration: 0.7 }, 0.18)
+    .to('[data-magie-antes]', { opacity: 0, y: -30, duration: 0.14 }, 0.16)
+    .to('[data-magie-despues]', { opacity: 1, duration: 0.1 }, 0.82)
+    .from('[data-magie-despues] > *', { y: 50, stagger: 0.04, duration: 0.14 }, 0.82);
+}
+
+// So entsteht sie: la línea se dibuja con el scroll y cada paso se enciende cuando la línea llega a él.
+function ablauf() {
+  const seccion = document.querySelector('[data-ablauf]');
+  const linie = document.querySelector('[data-ablauf-linie]');
+  if (!seccion || !linie) return;
+  gsap.to(linie, {
+    scaleY: 1,
+    ease: 'none',
+    scrollTrigger: { trigger: seccion.querySelector('ol'), start: 'top 60%', end: 'bottom 60%', scrub: 0.6 },
+  });
+  document.querySelectorAll<HTMLElement>('[data-schritt]').forEach((schritt) => {
+    const inhalt = schritt.querySelector<HTMLElement>('[data-schritt-inhalt]');
+    ScrollTrigger.create({ trigger: schritt, start: 'top 60%', toggleClass: { targets: schritt, className: 'is-on' } });
+    if (inhalt) {
+      const desdeDerecha = inhalt.dataset.seite === 'rechts' || window.innerWidth < 768;
+      gsap.from(inhalt, {
+        x: desdeDerecha ? 60 : -60,
+        opacity: 0,
+        duration: 1.1,
+        ease: 'expo.out',
+        scrollTrigger: { trigger: schritt, start: 'top 70%' },
+      });
+    }
+  });
+}
+
+// Escritorio: una luz suave sigue al ratón por las secciones oscuras.
+function luz() {
+  const el = document.querySelector<HTMLElement>('[data-luz]');
+  if (!el || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const pos = { x: innerWidth / 2, y: innerHeight / 2 };
+  const objetivo = { ...pos };
+  window.addEventListener('pointermove', (e) => {
+    objetivo.x = e.clientX;
+    objetivo.y = e.clientY;
+    el.classList.add('is-on');
+  });
+  gsap.ticker.add(() => {
+    pos.x += (objetivo.x - pos.x) * 0.12;
+    pos.y += (objetivo.y - pos.y) * 0.12;
+    el.style.setProperty('--lx', `${pos.x}px`);
+    el.style.setProperty('--ly', `${pos.y}px`);
+  });
+}
+
+// Escritorio: los botones se acercan un poco al puntero, como si tuvieran imán.
+function magnet() {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  document.querySelectorAll<HTMLElement>('[data-magnet], .btn-akzent').forEach((boton) => {
+    const xTo = gsap.quickTo(boton, 'x', { duration: 0.5, ease: 'power3.out' });
+    const yTo = gsap.quickTo(boton, 'y', { duration: 0.5, ease: 'power3.out' });
+    boton.addEventListener('pointermove', (e) => {
+      const r = boton.getBoundingClientRect();
+      xTo((e.clientX - (r.left + r.width / 2)) * 0.3);
+      yTo((e.clientY - (r.top + r.height / 2)) * 0.4);
+    });
+    boton.addEventListener('pointerleave', () => {
+      xTo(0);
+      yTo(0);
+    });
   });
 }

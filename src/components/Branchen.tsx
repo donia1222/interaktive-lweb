@@ -2,34 +2,36 @@ import type { CSSProperties } from 'react';
 import { branchen } from '../data/branchen';
 
 // Recorte inicial de la imagen de dentro: el círculo o el rectángulo del portal.
-const recorte = (p: { x: number; y: number; r: number; w?: number; h?: number }, abre: number) =>
+const recorte = (p: { x: number; y: number; r: number; w?: number; h?: number }) =>
   p.w && p.h
-    ? `inset(${(p.y - p.h / 2) * 100 * (1 - abre)}% ${(1 - p.x - p.w / 2) * 100 * (1 - abre)}% ${(1 - p.y - p.h / 2) * 100 * (1 - abre)}% ${(p.x - p.w / 2) * 100 * (1 - abre)}% round ${12 * (1 - abre)}px)`
+    ? `inset(${(p.y - p.h / 2) * 100}% ${(1 - p.x - p.w / 2) * 100}% ${(1 - p.y - p.h / 2) * 100}% ${(p.x - p.w / 2) * 100}% round 12px)`
     : `circle(${p.r * 100}% at ${p.x * 100}% ${p.y * 100}%)`;
 
-// Cada sector: la imagen de fuera hace zoom hacia su portal y la de dentro aparece por un círculo que se abre.
+// Galería horizontal fija: los sectores pasan de lado y el portal de cada uno se abre al llegar al centro.
 export default function Branchen() {
   return (
-    <section id="branchen" data-bg="#0b0a16" aria-labelledby="branchen-titel" className="relative px-6 py-32 md:px-12">
-      <div className="mx-auto max-w-7xl">
-        <div className="max-w-3xl">
-          <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Branchen</p>
-          <h2 id="branchen-titel" data-split className="mt-4 text-5xl leading-[0.95] md:text-7xl">
-            So könnte <em className="text-akzent">Ihre Branche</em> aussehen
-          </h2>
-          <p data-reveal className="mt-8 max-w-xl text-lg text-nieve/70">
-            Scrollen Sie langsam: Jedes Bild öffnet sich wie eine Tür. Genau so erleben Ihre Kunden Ihre neue Website.
-          </p>
-        </div>
+    <section id="branchen" data-bg="#0b0a16" data-branchen aria-labelledby="branchen-titel" className="relative">
+      <div data-branchen-pin className="relative flex h-svh flex-col justify-center overflow-hidden">
+        <div data-branchen-pista className="flex w-max items-center gap-6 pr-[8vw] pl-6 md:gap-10 md:pl-12">
+          <div className="w-[80vw] shrink-0 md:w-[38vw]">
+            <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">Branchen</p>
+            <h2 id="branchen-titel" data-split className="mt-4 text-5xl leading-[0.95] md:text-7xl">
+              So könnte <em className="text-akzent">Ihre Branche</em> aussehen
+            </h2>
+            <p className="mt-6 max-w-md text-base text-nieve/70 md:text-lg">
+              Scrollen Sie weiter: Jedes Bild öffnet sich wie eine Tür. Genau so erleben Ihre Kunden Ihre neue Website.
+            </p>
+            <p className="mt-8 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-nieve/50 uppercase">
+              <span className="h-px w-10 bg-akzent" />
+              {branchen.length} Branchen
+            </p>
+          </div>
+          {/* Hueco para que el primer sector entre por la derecha con su portal aún cerrado. */}
+          <div aria-hidden="true" className="w-[4vw] shrink-0 md:w-[30vw]" />
 
-        <div className="mt-24 flex flex-col gap-28 md:gap-40">
           {branchen.map((b, i) => (
-            <article
-              key={b.id}
-              data-branche
-              className={`grid items-center gap-10 md:gap-16 lg:grid-cols-[1.35fr_1fr] ${i % 2 ? 'lg:[&>*:first-child]:order-2' : ''}`}
-            >
-              <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-noche ring-1 ring-nieve/10">
+            <article key={b.id} data-branche data-portal={JSON.stringify(b.portal)} className="w-[80vw] max-w-[440px] shrink-0 md:w-[58vw] md:max-w-none">
+              <div data-branche-buehne className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-noche ring-1 ring-nieve/10 md:aspect-video md:rounded-[2rem]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   data-branche-aussen
@@ -37,7 +39,7 @@ export default function Branchen() {
                   alt=""
                   loading="lazy"
                   decoding="async"
-                  className="absolute inset-0 size-full object-cover will-change-transform"
+                  className="absolute inset-0 size-full object-cover"
                   style={{ transformOrigin: `${b.portal.x * 100}% ${b.portal.y * 100}%` }}
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,23 +53,20 @@ export default function Branchen() {
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover"
-                  style={{ clipPath: recorte(b.portal, 0), opacity: 0, transformOrigin: `${b.portal.x * 100}% ${b.portal.y * 100}%` } as CSSProperties}
+                  style={{ clipPath: recorte(b.portal), opacity: 0, transformOrigin: `${b.portal.x * 100}% ${b.portal.y * 100}%` } as CSSProperties}
                 />
-                <span className="absolute top-5 left-5 rounded-full bg-noche/60 px-3 py-1 font-mono text-[10px] tracking-[0.2em] uppercase ring-1 ring-nieve/15">
+                <span className="absolute top-4 left-4 rounded-full bg-noche/60 px-3 py-1 font-mono text-[10px] tracking-[0.2em] uppercase ring-1 ring-nieve/15 md:top-5 md:left-5">
                   {String(i + 1).padStart(2, '0')} · {b.name}
                 </span>
               </div>
-              <div>
-                <p className="font-mono text-[11px] tracking-[0.3em] text-akzent uppercase">{b.name}</p>
-                <h3 data-split className="mt-4 text-4xl leading-[0.98] md:text-5xl">
-                  {b.titel}
-                </h3>
-                <p data-reveal className="mt-6 text-base text-nieve/70 md:text-lg">
-                  {b.text}
-                </p>
-                <ul className="mt-8 flex flex-wrap gap-2">
+              <div data-branche-text className="mt-5 grid gap-3 md:mt-7 md:grid-cols-[1fr_auto] md:items-end md:gap-8">
+                <div>
+                  <h3 className="text-2xl leading-tight md:text-4xl">{b.titel}</h3>
+                  <p className="mt-2 max-w-xl text-sm text-nieve/65 md:text-base">{b.text}</p>
+                </div>
+                <ul className="flex flex-wrap gap-2 md:max-w-[15rem] md:justify-end">
                   {b.ideen.map((idee) => (
-                    <li key={idee} data-reveal className="rounded-full bg-nieve/[0.05] px-4 py-2 text-sm ring-1 ring-nieve/15">
+                    <li key={idee} className="rounded-full bg-nieve/[0.05] px-3 py-1.5 text-xs ring-1 ring-nieve/15">
                       {idee}
                     </li>
                   ))}
@@ -75,6 +74,10 @@ export default function Branchen() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mx-6 mt-8 h-px bg-nieve/10 md:mx-12 md:mt-12">
+          <div data-branchen-barra className="h-full origin-left scale-x-0 bg-akzent" />
         </div>
       </div>
     </section>

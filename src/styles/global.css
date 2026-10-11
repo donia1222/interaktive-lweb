@@ -172,6 +172,55 @@
   color: var(--color-nieve);
 }
 
+/* Proceso: el punto de cada paso se enciende cuando la línea llega a él. */
+.punkt {
+  transition:
+    background-color 600ms var(--ease-fluid),
+    box-shadow 600ms var(--ease-fluid),
+    transform 600ms var(--ease-fluid);
+}
+
+[data-schritt].is-on .punkt {
+  background-color: var(--color-akzent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--color-akzent) 20%, transparent), 0 0 24px var(--color-akzent);
+  transform: scale(1.15);
+}
+
+/* Monitor del estudio: el recorrido del hero en bucle (cada escena se acerca a su portal y se funde con la siguiente). */
+.mini-portal img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: miniPortal 14s linear infinite;
+}
+
+.mini-portal img:nth-child(1) { animation-delay: 0s; transform-origin: 50% 47%; }
+.mini-portal img:nth-child(2) { animation-delay: 3.5s; transform-origin: 50% 40%; }
+.mini-portal img:nth-child(3) { animation-delay: 7s; transform-origin: 50% 39%; }
+.mini-portal img:nth-child(4) { animation-delay: 10.5s; transform-origin: 50% 47%; }
+
+@keyframes miniPortal {
+  0% { opacity: 0; transform: scale(1); }
+  4% { opacity: 1; }
+  25% { opacity: 1; transform: scale(2.2); }
+  30% { opacity: 0; transform: scale(3); }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+/* Luz que sigue al ratón (solo escritorio). */
+.luz {
+  opacity: 0;
+  transition: opacity 1s var(--ease-fluid);
+  background: radial-gradient(520px circle at var(--lx, 50%) var(--ly, 50%), color-mix(in oklab, var(--color-akzent) 9%, transparent), transparent 70%);
+}
+
+.luz.is-on {
+  opacity: 1;
+}
+
 /* Paso activo del "cómo está hecho". */
 [data-paso] {
   opacity: 0.45;
@@ -210,6 +259,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mini-portal img {
+    animation: none;
+  }
+
+  .mini-portal img:nth-child(1) {
+    opacity: 1;
+  }
+
   [data-paso] {
     opacity: 1;
   }
