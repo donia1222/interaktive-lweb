@@ -10,7 +10,9 @@ export type Branche = {
   aussen: string;
   innen: string;
   alt: string;
-  portal: { x: number; y: number; r: number };
+  /** Centro de la abertura (fracciones) y su radio (fracción del ancho). Con `w` y `h` (fracciones del ancho y del
+   *  alto) la abertura es un rectángulo, como el ventanal de la casa. */
+  portal: { x: number; y: number; r: number; w?: number; h?: number };
 };
 
 export const branchen: Branche[] = [
@@ -23,7 +25,7 @@ export const branchen: Branche[] = [
     aussen: '/escenas/branchen/restaurant-a.webp',
     innen: '/escenas/branchen/restaurant-b.webp',
     alt: 'Restaurant bei Nacht durch ein rundes Fenster, dahinter ein angerichteter Teller',
-    portal: { x: 0.5, y: 0.5, r: 0.15 },
+    portal: { x: 0.497, y: 0.41, r: 0.16 },
   },
   {
     id: 'hotel',
@@ -34,7 +36,7 @@ export const branchen: Branche[] = [
     aussen: '/escenas/branchen/hotel-a.webp',
     innen: '/escenas/branchen/hotel-b.webp',
     alt: 'Hotelzimmer mit rundem Fenster, dahinter die verschneiten Berge bei Sonnenaufgang',
-    portal: { x: 0.5, y: 0.5, r: 0.15 },
+    portal: { x: 0.498, y: 0.39, r: 0.164 },
   },
   {
     id: 'weingut',
@@ -45,7 +47,7 @@ export const branchen: Branche[] = [
     aussen: '/escenas/branchen/weingut-a.webp',
     innen: '/escenas/branchen/weingut-b.webp',
     alt: 'Ein Glas Rotwein vor den Rebbergen im Rheintal, darin der Wein in goldenem Licht',
-    portal: { x: 0.5, y: 0.5, r: 0.11 },
+    portal: { x: 0.495, y: 0.335, r: 0.1 },
   },
   {
     id: 'immobilien',
@@ -56,7 +58,7 @@ export const branchen: Branche[] = [
     aussen: '/escenas/branchen/immobilien-a.webp',
     innen: '/escenas/branchen/immobilien-b.webp',
     alt: 'Modernes Haus in der Dämmerung, durchs Fenster das Wohnzimmer mit Kamin',
-    portal: { x: 0.5, y: 0.5, r: 0.15 },
+    portal: { x: 0.5, y: 0.51, r: 0.17, w: 0.34, h: 0.36 },
   },
   {
     id: 'handwerk',
@@ -67,6 +69,6 @@ export const branchen: Branche[] = [
     aussen: '/escenas/branchen/handwerk-a.webp',
     innen: '/escenas/branchen/handwerk-b.webp',
     alt: 'Schreinerei bei Nacht mit rundem Fenster, dahinter Hände beim Hobeln von Holz',
-    portal: { x: 0.5, y: 0.5, r: 0.125 },
+    portal: { x: 0.5, y: 0.38, r: 0.148 },
   },
 ];

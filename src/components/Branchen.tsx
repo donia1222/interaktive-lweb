@@ -1,6 +1,12 @@
 import type { CSSProperties } from 'react';
 import { branchen } from '../data/branchen';
 
+// Recorte inicial de la imagen de dentro: el círculo o el rectángulo del portal.
+const recorte = (p: { x: number; y: number; r: number; w?: number; h?: number }, abre: number) =>
+  p.w && p.h
+    ? `inset(${(p.y - p.h / 2) * 100 * (1 - abre)}% ${(1 - p.x - p.w / 2) * 100 * (1 - abre)}% ${(1 - p.y - p.h / 2) * 100 * (1 - abre)}% ${(p.x - p.w / 2) * 100 * (1 - abre)}% round ${12 * (1 - abre)}px)`
+    : `circle(${p.r * 100}% at ${p.x * 100}% ${p.y * 100}%)`;
+
 // Cada sector: la imagen de fuera hace zoom hacia su portal y la de dentro aparece por un círculo que se abre.
 export default function Branchen() {
   return (
@@ -38,12 +44,14 @@ export default function Branchen() {
                 <img
                   data-branche-innen
                   data-r={b.portal.r}
+                  data-w={b.portal.w}
+                  data-h={b.portal.h}
                   src={b.innen}
                   alt={b.alt}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover"
-                  style={{ clipPath: `circle(${b.portal.r * 100}% at ${b.portal.x * 100}% ${b.portal.y * 100}%)`, opacity: 0 } as CSSProperties}
+                  style={{ clipPath: recorte(b.portal, 0), opacity: 0, transformOrigin: `${b.portal.x * 100}% ${b.portal.y * 100}%` } as CSSProperties}
                 />
                 <span className="absolute top-5 left-5 rounded-full bg-noche/60 px-3 py-1 font-mono text-[10px] tracking-[0.2em] uppercase ring-1 ring-nieve/15">
                   {String(i + 1).padStart(2, '0')} · {b.name}

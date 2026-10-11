@@ -256,14 +256,24 @@ function branchen() {
     const innen = tarjeta.querySelector<HTMLElement>('[data-branche-innen]');
     if (!aussen || !innen) return;
     const r = Number(innen.dataset.r) * 100;
-    const origen = aussen.style.transformOrigin.split(' ');
-    const estado = { r };
-    const pintar = () => (innen.style.clipPath = `circle(${estado.r}% at ${origen[0]} ${origen[1]})`);
+    const w = Number(innen.dataset.w || 0);
+    const h = Number(innen.dataset.h || 0);
+    const [ox, oy] = aussen.style.transformOrigin.split(' ').map((v) => parseFloat(v) / 100);
+    const estado = { r, abre: 0 };
+    // Círculo que crece o, si el portal es un rectángulo (el ventanal de la casa), un recorte que se abre hacia los bordes.
+    const pintar = () => {
+      if (w && h) {
+        const k = 1 - estado.abre;
+        innen.style.clipPath = `inset(${(oy - h / 2) * 100 * k}% ${(1 - ox - w / 2) * 100 * k}% ${(1 - oy - h / 2) * 100 * k}% ${(ox - w / 2) * 100 * k}% round ${12 * k}px)`;
+      } else {
+        innen.style.clipPath = `circle(${estado.r}% at ${ox * 100}% ${oy * 100}%)`;
+      }
+    };
     gsap
       .timeline({ scrollTrigger: { trigger: tarjeta, start: 'top 75%', end: 'center 35%', scrub: 1 } })
       .to(aussen, { scale: 2.6, ease: 'power2.in', duration: 1 }, 0)
       .to(innen, { opacity: 1, ease: 'none', duration: 0.25 }, 0.15)
-      .to(estado, { r: 80, ease: 'power2.in', duration: 0.75, onUpdate: pintar }, 0.25)
+      .to(estado, { r: 80, abre: 1, ease: 'power2.in', duration: 0.75, onUpdate: pintar }, 0.25)
       .fromTo(innen, { scale: 1.25 }, { scale: 1, ease: 'none', duration: 1 }, 0);
   });
 }
