@@ -50,4 +50,24 @@ for (const [nombre, r] of Object.entries(imagenes)) {
     await sharp(provisional(nombre, r)).webp({ quality: 80 }).toFile(destino);
   }
 }
+// La pantalla del móvil (hero 1) muestra ya la escena siguiente (hero 2), colocada exactamente como la pinta el
+// recorrido al empezar el tramo: así la cámara entra en la pantalla sin corte. Medidas en fracciones de la imagen.
+export const PANTALLA = { x: 0.4205, y: 0.162, w: 0.1615, h: 0.612, radio: 38 };
+const real = (nombre) => ['png', 'jpg', 'jpeg', 'webp'].some((ext) => existsSync(`imagenes/${nombre}.${ext}`));
+if (real('hero/1-handy') && real('hero/2-tor')) {
+  const px = Math.round(PANTALLA.x * W);
+  const py = Math.round(PANTALLA.y * H);
+  const pw = Math.round(PANTALLA.w * W);
+  const ph = Math.round(PANTALLA.h * H);
+  // El hero 2 se escala para que su alto llene la pantalla y se centra en ella.
+  const escala = ph / H;
+  const ancho = Math.round(W * escala);
+  const tor = await sharp(`${OUT}/hero/2-tor.webp`).resize(ancho, ph).toBuffer();
+  const recorte = await sharp(tor).extract({ left: Math.round((ancho - pw) / 2), top: 0, width: pw, height: ph }).toBuffer();
+  const mascara = Buffer.from(`<svg width="${pw}" height="${ph}"><rect width="${pw}" height="${ph}" rx="${PANTALLA.radio}" fill="#fff"/></svg>`);
+  const pantalla = await sharp(recorte).composite([{ input: mascara, blend: 'dest-in' }]).png().toBuffer();
+  const handy = await sharp(`${OUT}/hero/1-handy.webp`).composite([{ input: pantalla, left: px, top: py }]).toBuffer();
+  await sharp(handy).webp({ quality: 84 }).toFile(`${OUT}/hero/1-handy.webp`);
+}
+
 console.log(`escenas: ${reales} de ${Object.keys(imagenes).length} imágenes reales, el resto provisionales`);

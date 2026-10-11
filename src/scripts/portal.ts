@@ -211,7 +211,7 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
       c.translate(-W / 2, -H / 2);
     };
 
-    const { portal: p, llegada: q, zoom: K, apertura } = tramos[tramo];
+    const { portal: p, llegada: q, zoom: K, apertura, forma = 'circulo', pantalla, fundido = [0.42, 0.72] } = tramos[tramo];
     const a = fuentes[tramo];
     const b = fuentes[tramo + 1];
 
@@ -244,12 +244,33 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
     pintar(a, { tx: cx - ko * p.x, ty: cy - ko * p.y, k: ko, alpha: 1 - smooth(range(t, 0.86, 1)) });
 
     // Escena siguiente: no aparece hasta que el portal ya es grande; antes, el portal enseña lo que tiene pintado.
-    const alphaB = smooth(range(t, 0.42, 0.72));
+    const alphaB = smooth(range(t, fundido[0], fundido[1]));
     if (b && alphaB > 0.002) {
       const ki = k / K;
       const plano = { tx: cx - ki * q.x, ty: cy - ki * q.y, k: ki, alpha: 1 };
       if (t >= 1) {
         pintar(b, { ...plano, alpha: alphaB });
+      } else if (forma === 'pantalla' && pantalla) {
+        // Portal rectangular (una pantalla): la escena siguiente se ve recortada por la pantalla, que sigue a la
+        // cámara y al final se abre hasta cubrir la vista.
+        const abre = smooth(range(t, 0.5, 1));
+        const pw = k * pantalla.w * boxW;
+        const ph = k * pantalla.h * boxH;
+        const px = ox + cx * boxW - pw / 2;
+        const py = oy + cy * boxH - ph / 2;
+        const margen = 40;
+        const x0 = px + (-margen - px) * abre;
+        const y0 = py + (-margen - py) * abre;
+        const x1 = px + pw + (W + margen - (px + pw)) * abre;
+        const y1 = py + ph + (H + margen - (py + ph)) * abre;
+        const radio = k * pantalla.radio * boxW * (1 - abre);
+        ctx.save();
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x0, y0, x1 - x0, y1 - y0, radio);
+        else ctx.rect(x0, y0, x1 - x0, y1 - y0);
+        ctx.clip();
+        pintar(b, { ...plano, alpha: alphaB });
+        ctx.restore();
       } else {
         // Se pinta aparte y se recorta con un degradado radial que se abre al final del tramo.
         const rho0 = apertura ?? Math.min(p.r * K, MAX_RHO);

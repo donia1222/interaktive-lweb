@@ -22,6 +22,12 @@ export type Tramo = {
   /** Radio del círculo por el que se ve la escena siguiente al empezar, en su propio marco. Por defecto, el del
    *  portal limitado a la mitad del alto del marco; más grande solo si las dos imágenes se parecen en el borde. */
   apertura?: number;
+  /** Forma del portal: círculo (máscara difuminada) o pantalla (recorte rectangular con esquinas redondeadas). */
+  forma?: 'circulo' | 'pantalla';
+  /** Tamaño del portal si es una pantalla: `w` en fracciones del ancho, `h` del alto y `radio` del ancho. */
+  pantalla?: { w: number; h: number; radio: number };
+  /** Tramo de `t` en el que aparece la escena siguiente. Por defecto [0.42, 0.72]. */
+  fundido?: [number, number];
 };
 
 export const escenas: Escena[] = [
@@ -62,15 +68,22 @@ export const escenas: Escena[] = [
   },
 ];
 
-// tramos[i] lleva de escenas[i] a escenas[i + 1].
-// PROVISIONAL: portales en el centro con el radio pedido en PROMPTS.md. Se vuelven a medir con cada imagen real.
+// tramos[i] lleva de escenas[i] a escenas[i + 1]. Portales medidos sobre las imágenes reales.
 export const tramos: Tramo[] = [
-  // Por la pantalla del móvil, al tor de luz.
-  { portal: { x: 0.5, y: 0.5, r: 0.08 }, llegada: { x: 0.5, y: 0.5 }, zoom: 4 },
-  // Por el anillo de luz, a la galería.
-  { portal: { x: 0.5, y: 0.5, r: 0.15 }, llegada: { x: 0.5, y: 0.5 }, zoom: 3 },
-  // Por la ventana del fondo, al lago.
-  { portal: { x: 0.5, y: 0.5, r: 0.11 }, llegada: { x: 0.5, y: 0.5 }, zoom: 4 },
+  // Por la pantalla del móvil, que ya muestra el anillo (scripts/escenas.mjs lo coloca dentro): la pantalla crece
+  // hasta el alto de la vista y se abre. zoom = 1 / alto de la pantalla, para que encaje sin corte.
+  {
+    portal: { x: 0.5013, y: 0.468, r: 0.08 },
+    llegada: { x: 0.5, y: 0.5 },
+    zoom: 1 / 0.612,
+    forma: 'pantalla',
+    pantalla: { w: 0.1615, h: 0.612, radio: 0.0227 },
+    fundido: [0, 0.02],
+  },
+  // Por el anillo de luz, a la galería: su ventana redonda aparece dentro del anillo.
+  { portal: { x: 0.4994, y: 0.4, r: 0.15 }, llegada: { x: 0.4994, y: 0.388 }, zoom: 3.2 },
+  // Por la ventana del fondo de la galería, al lago.
+  { portal: { x: 0.4994, y: 0.388, r: 0.099 }, llegada: { x: 0.5, y: 0.42 }, zoom: 4 },
   // Por la esfera de cristal, a los Alpes.
-  { portal: { x: 0.5, y: 0.5, r: 0.1 }, llegada: { x: 0.5, y: 0.45 }, zoom: 4 },
+  { portal: { x: 0.4994, y: 0.4676, r: 0.088 }, llegada: { x: 0.5, y: 0.5 }, zoom: 4.5 },
 ];
