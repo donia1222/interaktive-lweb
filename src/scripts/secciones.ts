@@ -239,18 +239,54 @@ function diagrama() {
   });
 }
 
-// Pie: las letras de la marca suben una a una.
+// Pie: las letras de la marca suben una a una y, al llegar, una ola de luz dorada recorre la palabra.
+// Después el punto se queda latiendo y la ola vuelve a pasar de vez en cuando.
 function pie() {
   const marca = document.querySelector<HTMLElement>('[data-pie-marca]');
   if (!marca) return;
   document.fonts.ready.then(() => {
-    const split = SplitText.create(marca, { type: 'chars', mask: 'chars' });
-    gsap.from(split.chars, {
-      yPercent: 100,
-      duration: 1.4,
-      ease: 'expo.out',
-      stagger: 0.08,
-      scrollTrigger: { trigger: marca, start: 'top 90%' },
+    // La máscara va en la línea, no en cada letra: con las letras tan juntas, una máscara por letra cortaba los bordes.
+    const split = SplitText.create(marca, { type: 'lines,chars', mask: 'lines', linesClass: 'pb-[0.06em]' });
+    const letras = split.chars as HTMLElement[];
+    const punto = marca.querySelector<HTMLElement>('.text-akzent');
+    const brillo = '0 0 0.12em rgba(255,214,160,0.95), 0 0 0.35em rgba(242,180,109,0.7), 0 0 0.8em rgba(242,180,109,0.35)';
+    const apagado = '0 0 0 rgba(255,214,160,0), 0 0 0 rgba(242,180,109,0), 0 0 0 rgba(242,180,109,0)';
+    gsap.set(letras, { textShadow: apagado });
+
+    // Ola de luz: cada letra se enciende y se apaga, en orden.
+    const ola = () =>
+      gsap
+        .timeline()
+        .to(letras, { color: '#fff4e3', textShadow: brillo, duration: 0.35, ease: 'power2.out', stagger: 0.06 }, 0)
+        .to(letras, { color: '', textShadow: apagado, duration: 0.9, ease: 'power2.inOut', stagger: 0.06 }, 0.35);
+
+    const entrada = gsap.timeline({ paused: true });
+    entrada
+      .from(letras, { yPercent: 100, duration: 1.4, ease: 'expo.out', stagger: 0.08 })
+      .add(ola(), 0.9);
+    if (punto) {
+      entrada.to(punto, { textShadow: '0 0 0.25em rgba(242,180,109,0.9), 0 0 0.6em rgba(242,180,109,0.5)', duration: 0.6 }, 1.4);
+      // El punto late suave mientras el pie se ve.
+      const late = gsap.to(punto, { textShadow: '0 0 0.1em rgba(242,180,109,0.5), 0 0 0.3em rgba(242,180,109,0.2)', duration: 1.6, ease: 'sine.inOut', repeat: -1, yoyo: true, paused: true });
+      entrada.eventCallback('onComplete', () => late.play());
+    }
+    // Cada pocos segundos, otra ola mientras el pie está a la vista.
+    let repetir: gsap.core.Tween | null = null;
+    ScrollTrigger.create({
+      trigger: marca,
+      start: 'top 90%',
+      once: false,
+      onEnter: () => {
+        if (!entrada.progress()) entrada.play();
+        repetir ??= gsap.delayedCall(6, function bucle() {
+          ola();
+          repetir = gsap.delayedCall(6, bucle);
+        });
+      },
+      onLeaveBack: () => {
+        repetir?.kill();
+        repetir = null;
+      },
     });
   });
 }
