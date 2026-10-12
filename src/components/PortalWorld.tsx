@@ -2,8 +2,8 @@ import Stop from './Stop';
 import Dial from './Dial';
 import { escenas } from '../data/escenas';
 
-const title = 'mt-4 text-5xl leading-[0.95] md:text-6xl';
-const body = 'mt-5 max-w-lg text-base text-nieve/75 md:text-lg';
+const title = 'mt-3 text-[clamp(2.1rem,6.2svh,3rem)] leading-[0.95] md:mt-4 md:text-6xl';
+const body = 'mt-[min(1.25rem,2svh)] max-w-lg text-[15px] text-nieve/75 md:mt-5 md:text-lg';
 
 export default function PortalWorld() {
   return (
@@ -67,7 +67,7 @@ export default function PortalWorld() {
             Und Ihre Kunden sagen: <em className="text-akzent">Wow.</em>
           </h2>
           <p className={body}>Von Hand programmiert in der Schweiz, für Restaurants, Hotels, Weingüter, Immobilien und Handwerk.</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <div className="mt-[min(2rem,3.5svh)] flex flex-wrap justify-center gap-3">
             <a href="#branchen" className="btn btn-akzent">
               So könnte Ihre Branche aussehen
             </a>

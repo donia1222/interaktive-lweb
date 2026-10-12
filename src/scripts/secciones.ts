@@ -107,7 +107,13 @@ function galeria() {
   const pista = document.querySelector<HTMLElement>('[data-galeria-pista]');
   const barra = document.querySelector<HTMLElement>('[data-galeria-barra]');
   if (!pin || !pista) return;
-  const distancia = () => pista.scrollWidth - window.innerWidth;
+  // La galería termina con la última tarjeta exactamente en el centro de la pantalla, sea cual sea su tamaño.
+  const ultimaTarjeta = [...pista.querySelectorAll<HTMLElement>('[data-branche]')].pop();
+  const distancia = () => {
+    if (!ultimaTarjeta) return pista.scrollWidth - window.innerWidth;
+    const izquierda = ultimaTarjeta.getBoundingClientRect().left - pista.getBoundingClientRect().left;
+    return izquierda + ultimaTarjeta.offsetWidth / 2 - window.innerWidth / 2;
+  };
   const recorrido = gsap.to(pista, {
     x: () => -distancia(),
     ease: 'none',
@@ -317,7 +323,13 @@ function branchen() {
   const pista = document.querySelector<HTMLElement>('[data-branchen-pista]');
   const barra = document.querySelector<HTMLElement>('[data-branchen-barra]');
   if (!pin || !pista) return;
-  const distancia = () => pista.scrollWidth - window.innerWidth;
+  // La galería termina con la última tarjeta exactamente en el centro de la pantalla, sea cual sea su tamaño.
+  const ultimaTarjeta = [...pista.querySelectorAll<HTMLElement>('[data-branche]')].pop();
+  const distancia = () => {
+    if (!ultimaTarjeta) return pista.scrollWidth - window.innerWidth;
+    const izquierda = ultimaTarjeta.getBoundingClientRect().left - pista.getBoundingClientRect().left;
+    return izquierda + ultimaTarjeta.offsetWidth / 2 - window.innerWidth / 2;
+  };
   const recorrido = gsap.to(pista, {
     x: () => -distancia(),
     ease: 'none',
@@ -377,9 +389,10 @@ function branchen() {
         scrollTrigger: {
           trigger: tarjeta,
           containerAnimation: recorrido,
-          // La última no puede pasar del centro (la galería termina ahí), así que se abre entre su llegada y el final.
+          // La última no puede pasar del centro (la galería termina con ella centrada), así que se abre entre su
+          // llegada y ese final.
           start: ultima ? (movil ? 'left 45%' : 'left 50%') : movil ? 'left 18%' : 'left 45%',
-          end: ultima ? (movil ? 'left 9%' : 'left 23%') : movil ? 'center 22%' : 'center 35%',
+          end: ultima ? 'center 50%' : movil ? 'center 22%' : 'center 35%',
           scrub: true,
         },
       })
