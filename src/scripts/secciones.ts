@@ -3,26 +3,27 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
 // Animaciones de las secciones que van después del recorrido.
-// Beispiele: los dos teléfonos llegan girados en 3D (cada uno hacia su lado) y se enderezan al entrar en pantalla.
+// Beispiele: las tarjetas se apilan. Mientras la siguiente sube, la de debajo se encoge un poco y se apaga.
 function beispiele(reduceMotion: boolean) {
+  const projekte = [...document.querySelectorAll<HTMLElement>('[data-beispiel]')];
+  // Solo se anima el recorrido en miniatura de las tarjetas que se ven.
+  const visto = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle('is-visible', e.isIntersecting)));
+  projekte.forEach((p) => visto.observe(p));
   if (reduceMotion) return;
-  document.querySelectorAll<HTMLElement>('[data-beispiel]').forEach((b) => {
-    const telefon = b.querySelector<HTMLElement>('[data-telefon]');
-    if (!telefon) return;
-    const lado = Number(b.dataset.beispiel) === 0 ? -1 : 1;
-    gsap.fromTo(
-      telefon,
-      { rotateY: 38 * lado, rotateX: 14, rotateZ: -6 * lado, y: 120, scale: 0.86, transformPerspective: 1100 },
-      {
-        rotateY: 0,
-        rotateX: 0,
-        rotateZ: 0,
-        y: 0,
-        scale: 1,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: b, start: 'top 95%', end: 'top 35%', scrub: 0.6 },
-      },
-    );
+  projekte.forEach((p, i) => {
+    const siguiente = projekte[i + 1];
+    const karte = p.querySelector<HTMLElement>('[data-projekt-karte]');
+    const text = p.querySelector<HTMLElement>('[data-projekt-text]');
+    if (text) {
+      gsap.from(text.children, { y: 40, autoAlpha: 0, stagger: 0.08, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: p, start: 'top 70%', once: true } });
+    }
+    if (!siguiente || !karte) return;
+    gsap.to(karte, {
+      scale: 0.9,
+      filter: 'brightness(0.4)',
+      ease: 'none',
+      scrollTrigger: { trigger: siguiente, start: 'top bottom', end: 'top 15%', scrub: true },
+    });
   });
 }
 

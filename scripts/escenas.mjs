@@ -77,20 +77,16 @@ if (real('hero/1-handy') && real('hero/2-tor')) {
 
 console.log(`escenas: ${reales} de ${Object.keys(imagenes).length} imágenes reales, el resto provisionales`);
 
-// Beispiele: escenas de las webs de ejemplo (Atelier Firn y Braidz'n Tips), recortadas en vertical para la pantalla de
-// un móvil. `foco` es el punto (fracción del ancho) que queda centrado.
+// Beispiele: escenas de las webs de ejemplo (Atelier Firn, Braidz'n Tips y Flink Sauber) para las tarjetas de proyectos.
+// Se guardan en 16:9; en el móvil la tarjeta es vertical y el encuadre lo da `object-position` (ver Beispiele.tsx).
 {
   const { readdirSync } = await import('node:fs');
-  const foco = { 'braidz-1': 0.494, 'braidz-2': 0.6 };
   const dir = 'imagenes/beispiele';
   if (existsSync(dir)) {
     await mkdir(`${OUT}/beispiele`, { recursive: true });
     for (const archivo of readdirSync(dir).filter((f) => /\.(png|jpe?g|webp)$/.test(f))) {
       const nombre = archivo.replace(/\.[^.]+$/, '');
-      const { width: w, height: h } = await sharp(`${dir}/${archivo}`).metadata();
-      const ancho = Math.round((h * 9) / 19.5);
-      const x = Math.max(0, Math.min(w - ancho, Math.round((foco[nombre] ?? 0.5) * w - ancho / 2)));
-      await sharp(`${dir}/${archivo}`).extract({ left: x, top: 0, width: ancho, height: h }).resize(540, 1170).webp({ quality: 82 }).toFile(`${OUT}/beispiele/${nombre}.webp`);
+      await sharp(`${dir}/${archivo}`).resize(1440, 810, { fit: 'cover' }).webp({ quality: 80 }).toFile(`${OUT}/beispiele/${nombre}.webp`);
     }
   }
 }

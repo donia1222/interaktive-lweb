@@ -219,18 +219,47 @@
   100% { opacity: 0; transform: scale(3); }
 }
 
-/* Beispiele: el teléfono y su recorrido en miniatura. Cada escena se abre en un círculo encima de la anterior y se
-   acerca despacio; la que se abre sube por encima (z-index), la anterior queda justo debajo mientras tanto y las demás, al fondo. */
-.telefon {
-  padding: 10px;
-  border-radius: 2.9rem;
-  background: linear-gradient(145deg, #2a2d3d, #0c0d16 60%, #1d2030);
+/* Beispiele: tarjetas de proyecto que se apilan. Cada una lleva el color de su web (--farbe) en el brillo, el punto
+   "Live" y el botón. Dentro, su recorrido en miniatura: cada escena se abre en un círculo encima de la anterior y se
+   acerca despacio; la que se abre sube por encima (z-index), la anterior queda justo debajo y las demás, al fondo. */
+.projekt-karte {
+  background: var(--color-noche);
   box-shadow:
-    inset 0 0 0 1.5px rgb(255 255 255 / 0.12),
-    0 40px 80px -30px rgb(0 0 0 / 0.8),
-    0 0 90px -20px color-mix(in oklab, var(--color-akzent) 35%, transparent);
-  transform-style: preserve-3d;
-  will-change: transform;
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    0 -20px 60px -30px rgb(0 0 0 / 0.9),
+    0 40px 100px -40px color-mix(in oklab, var(--farbe) 45%, transparent);
+  transform-origin: 50% 0;
+  will-change: transform, filter;
+}
+
+.projekt-art {
+  color: var(--farbe);
+}
+
+.projekt-punkt {
+  background: var(--farbe);
+  box-shadow: 0 0 0 0 var(--farbe);
+  animation: projektPunkt 2.4s ease-out infinite;
+}
+
+@keyframes projektPunkt {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--farbe) 70%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 8px transparent; }
+}
+
+.btn-projekt {
+  background: var(--farbe);
+  color: var(--color-noche);
+  box-shadow: 0 12px 30px -12px var(--farbe);
+}
+
+.btn-projekt:hover {
+  background: var(--color-nieve);
+}
+
+/* Fuera de pantalla, el recorrido en miniatura se detiene. */
+.projekt:not(.is-visible) .mini-reise img {
+  animation-play-state: paused;
 }
 
 .mini-reise img {
