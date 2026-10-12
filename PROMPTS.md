@@ -145,3 +145,53 @@ A calm developer studio at night in the Swiss Rhine valley: a wooden desk with o
 - [ ] extra/studio.png
 
 **16 imágenes en total.** Si vas sacándolas poco a poco, avísame cuando tengas el hero completo (las 5) y empiezo a montarlo sin esperar al resto.
+
+---
+
+## SERIE NUEVA · HERO DE PROGRAMACIÓN (carpeta `imagenes/hero-code/`, formato 16:9)
+
+El hero nuevo, para el dominio propio: un viaje **al interior del código**. Sustituye al de móvil, lago y Alpes, que se parecía demasiado al de los relojes.
+
+Reglas como siempre: una conversación solo para esta serie, primero el estilo común, desde la 2.ª imagen adjunta la anterior con `Same style, same color palette and lighting as the attached image.`, el portal **exactamente en el centro** y siempre en horizontal 16:9.
+
+**Muy importante: nada de letras legibles.** ChatGPT tiende a escribir código falso con letras raras, y se nota muchísimo. El código siempre como **barras y líneas de colores**, como el minimapa de un editor. Si salen letras, pide:
+`Replace all text and letters with abstract glowing colored bars, like a code minimap. No readable characters at all.`
+
+### ESTILO COMÚN (pégalo al principio)
+```
+I am creating a series of cinematic images for the website of a studio that hand-codes interactive websites. Every image must follow these rules:
+- Wide 16:9 landscape format, highest resolution possible.
+- Photorealistic and cinematic, like a high-end tech commercial, shallow depth of field where it fits.
+- Color palette: deep black and midnight blue, with warm amber-gold light as the main glow, and subtle electric cyan and violet accents. Premium, elegant, never cheesy or "hacker" style.
+- Code is always shown as abstract glowing colored bars and lines, like the minimap of a code editor. Absolutely no readable letters, numbers, symbols or text anywhere.
+- Symmetrical composition. The main opening ("portal") must be EXACTLY in the center of the image.
+- No logos, no watermarks, no people (no faces, no hands).
+I will send you the prompts one by one. Reply only with the image.
+```
+
+### `1-studio.png`, el estudio de noche
+```
+A dark, elegant developer studio at night, seen straight on. In the exact center, a large frameless monitor on a minimal walnut desk, its screen glowing with a code editor shown only as colorful abstract bars of light (amber, cyan, violet) on a deep dark background. The screen takes about 34% of the image width and is perfectly rectangular, facing the camera without any perspective. A mechanical keyboard with soft amber backlight, a ceramic coffee cup with steam, warm desk lamp light. Behind, a big dark window with blurred city lights. Cinematic, photorealistic, 16:9.
+```
+
+### `2-tunel.png`, el túnel de código (lo que hay "dentro" de la pantalla)
+```
+A breathtaking infinite tunnel made of thousands of floating lines of code, shown as glowing horizontal bars of amber, cyan and violet light, receding in one-point perspective toward the center. At the exact center at the end of the tunnel, a bright perfect circle of warm golden light, about 18% of the image width. Light particles drift through the air, deep black-blue darkness around. Cinematic, sense of speed and depth, 16:9, no readable characters.
+```
+
+### `3-wireframe.png`, el plano de la web
+```
+A vast dark space where a website is being built as a giant 3D blueprint: floating translucent wireframe panels of a website layout (header, image boxes, cards, buttons, navigation), drawn with thin glowing cyan lines and fine grid lines, arranged symmetrically in layers receding into depth. In the exact center, a large perfectly round glowing button made of golden light, like a portal, about 20% of the image width. Holographic, precise, elegant, 16:9, no text, no letters.
+```
+
+### `4-leben.png`, la web cobra vida
+```
+The same floating website panels now come to life: frosted glass cards with rich photographs, soft colorful gradients, glowing buttons and smooth shapes, floating in layers around the center in a dark, deep space, with light reflections and soft amber and violet glow. In the exact center, a modern smartphone standing upright, facing the camera straight on, its screen a bright, glowing, empty gradient of gold and soft pink light, about 14% of the image width. Cinematic, premium, magical, 16:9, no text, no letters.
+```
+
+### `5-wow.png`, el final
+```
+An elegant, spectacular burst of light: swirling ribbons of liquid gold and soft violet light, floating glass shapes and thousands of fine golden particles, slowly expanding outward from the center of a deep midnight-blue space, like a celebration. The center of the image stays calm and darker, with plenty of space for a headline. Cinematic, luxurious, photorealistic, 16:9, no text.
+```
+
+Guárdalas en `imagenes/hero-code/` con estos nombres exactos y avísame. Mido los portales, monto el recorrido y lo comparamos con el actual antes de cambiarlo.
