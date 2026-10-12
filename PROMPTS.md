@@ -150,7 +150,7 @@ A calm developer studio at night in the Swiss Rhine valley: a wooden desk with o
 
 ## SERIE NUEVA · HERO DE PROGRAMACIÓN (carpeta `imagenes/hero-code/`, formato 16:9)
 
-El hero nuevo, para el dominio propio: un viaje **al interior del código**. Sustituye al de móvil, lago y Alpes, que se parecía demasiado al de los relojes.
+El hero nuevo, para el dominio propio: un viaje **al interior del código** en 4 escenas: el estudio → el túnel de código → la web cobra vida → wow. Sustituye al de móvil, lago y Alpes, que se parecía demasiado al de los relojes.
 
 Reglas como siempre: una conversación solo para esta serie, primero el estilo común, desde la 2.ª imagen adjunta la anterior con `Same style, same color palette and lighting as the attached image.`, el portal **exactamente en el centro** y siempre en horizontal 16:9.
 
@@ -179,17 +179,12 @@ A dark, elegant developer studio at night, seen straight on. In the exact center
 A breathtaking infinite tunnel made of thousands of floating lines of code, shown as glowing horizontal bars of amber, cyan and violet light, receding in one-point perspective toward the center. At the exact center at the end of the tunnel, a bright perfect circle of warm golden light, about 18% of the image width. Light particles drift through the air, deep black-blue darkness around. Cinematic, sense of speed and depth, 16:9, no readable characters.
 ```
 
-### `3-wireframe.png`, el plano de la web
+### `3-leben.png`, la web cobra vida (lo que hay dentro del anillo)
 ```
-A vast dark space where a website is being built as a giant 3D blueprint: floating translucent wireframe panels of a website layout (header, image boxes, cards, buttons, navigation), drawn with thin glowing cyan lines and fine grid lines, arranged symmetrically in layers receding into depth. In the exact center, a large perfectly round glowing button made of golden light, like a portal, about 20% of the image width. Holographic, precise, elegant, 16:9, no text, no letters.
-```
-
-### `4-leben.png`, la web cobra vida
-```
-The same floating website panels now come to life: frosted glass cards with rich photographs, soft colorful gradients, glowing buttons and smooth shapes, floating in layers around the center in a dark, deep space, with light reflections and soft amber and violet glow. In the exact center, a modern smartphone standing upright, facing the camera straight on, its screen a bright, glowing, empty gradient of gold and soft pink light, about 14% of the image width. Cinematic, premium, magical, 16:9, no text, no letters.
+Through the golden circle: a website comes to life as a whole world: frosted glass cards with rich photographs, soft colorful gradients, glowing buttons and smooth shapes, floating in layers around the center in a dark, deep space, with light reflections and soft amber and violet glow. In the exact center, a modern smartphone standing upright, facing the camera straight on, its screen a bright, glowing, empty gradient of gold and soft pink light, about 14% of the image width. Cinematic, premium, magical, 16:9, no text, no letters.
 ```
 
-### `5-wow.png`, el final
+### `4-wow.png`, el final (lo que hay dentro del móvil)
 ```
 An elegant, spectacular burst of light: swirling ribbons of liquid gold and soft violet light, floating glass shapes and thousands of fine golden particles, slowly expanding outward from the center of a deep midnight-blue space, like a celebration. The center of the image stays calm and darker, with plenty of space for a headline. Cinematic, luxurious, photorealistic, 16:9, no text.
 ```
