@@ -195,7 +195,8 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
     puntero.x += (objetivo.x - puntero.x) * 0.04;
     puntero.y += (objetivo.y - puntero.y) * 0.04;
     const respira = reduceMotion ? 1.02 : 1.04 + Math.sin(time * 0.35) * 0.012;
-    const hayNieve = !!nieve && tramo === 0 && t < 0.9;
+    // Chispas de datos en los dos primeros tramos (pantalla y túnel); en el último, la web ya está viva.
+    const hayNieve = !!nieve && tramo < 2 && !(tramo === 1 && t > 0.9);
     if (!sucio && reduceMotion) return;
 
     // Marco 16:9 que cubre la pantalla, como object-fit: cover.
@@ -297,44 +298,53 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
       }
     }
 
-    // Nieve en el primer tramo: los copos salen despedidos desde el portal al hacer zoom.
+    // Chispas de datos: salen despedidas desde el portal y se estiran como a la velocidad de la luz al hacer zoom.
     if (hayNieve && nieve) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const gx = ox + cx * boxW;
       const gy = oy + cy * boxH;
-      nieve(ctx, W, H, dt, 1 - range(t, 0.55, 0.9), k, gx, gy);
+      nieve(ctx, W, H, dt, tramo === 0 ? smooth(range(t, 0.15, 0.5)) : 1 - range(t, 0.6, 0.9), k, gx, gy);
     }
     sucio = false;
   });
 }
 
-type Copo = { x: number; y: number; z: number; vx: number; vy: number };
+type Copo = { x: number; y: number; z: number; vx: number; vy: number; color: string };
+
+// Colores del código del hero: ámbar, cian y violeta.
+const COLORES = ['#f2b46d', '#f2b46d', '#5cc8ff', '#a78bfa'];
 
 function crearNieve() {
-  // Menos copos en pantallas pequeñas: se ven igual y cuestan la mitad.
-  const cantidad = innerWidth < 768 ? 90 : 160;
+  // Menos chispas en pantallas pequeñas: se ven igual y cuestan la mitad.
+  const cantidad = innerWidth < 768 ? 80 : 140;
   const copos: Copo[] = Array.from({ length: cantidad }, () => ({
     x: Math.random(),
     y: Math.random(),
     z: 0.25 + Math.random() * 0.75,
-    vx: (Math.random() - 0.5) * 0.02,
-    vy: 0.02 + Math.random() * 0.03,
+    vx: (Math.random() - 0.5) * 0.01,
+    vy: (Math.random() - 0.5) * 0.01,
+    color: COLORES[Math.floor(Math.random() * COLORES.length)],
   }));
   return (ctx: CanvasRenderingContext2D, W: number, H: number, dt: number, cantidad: number, zoom: number, ox: number, oy: number) => {
     if (cantidad <= 0.01) return;
-    ctx.fillStyle = '#eef1f6';
+    ctx.lineCap = 'round';
     for (const f of copos) {
       f.x = (f.x + f.vx * dt * f.z + 1) % 1;
-      f.y = (f.y + f.vy * dt * f.z) % 1;
-      // Los copos cercanos (z alto) se separan más deprisa del centro al hacer zoom: sensación de atravesar la nevada.
+      f.y = (f.y + f.vy * dt * f.z + 1) % 1;
+      // Las cercanas (z alto) se separan antes del centro al hacer zoom; la estela va hacia el centro y crece con el zoom.
       const s = Math.pow(zoom, 0.6 + f.z * 1.6);
       const x = ox + (f.x * W - ox) * s;
       const y = oy + (f.y * H - oy) * s;
-      if (x < -20 || x > W + 20 || y < -20 || y > H + 20) continue;
-      ctx.globalAlpha = cantidad * (0.25 + f.z * 0.55);
+      if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+      const estela = Math.min(0.35, (s - 1) * 0.08);
+      ctx.globalAlpha = cantidad * (0.3 + f.z * 0.6);
+      ctx.strokeStyle = f.color;
+      ctx.lineWidth = 0.8 + f.z * 1.6;
       ctx.beginPath();
-      ctx.arc(x, y, (0.6 + f.z * 1.8) * Math.min(s, 3), 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - (x - ox) * estela, y - (y - oy) * estela);
+      ctx.lineTo(x + 0.01, y + 0.01);
+      ctx.stroke();
     }
     ctx.globalAlpha = 1;
   };

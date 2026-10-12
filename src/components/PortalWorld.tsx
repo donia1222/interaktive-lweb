@@ -48,21 +48,16 @@ export default function PortalWorld() {
         </Stop>
 
         <Stop index={1} eyebrow="Hinter dem Bildschirm">
-          <h2 className={title}>Hinter jedem Bildschirm wartet eine Welt</h2>
-          <p className={body}>Ihre Kunden scrollen nicht mehr an Ihnen vorbei. Sie reisen hinein.</p>
+          <h2 className={title}>Jede Zeile von Hand geschrieben</h2>
+          <p className={body}>Kein Baukasten, keine Vorlage: Ihre Website entsteht im Code, schnell, sauber und nur für Sie.</p>
         </Stop>
 
         <Stop index={2} eyebrow="In Bewegung">
-          <h2 className={title}>Jedes Detail reagiert auf den Besucher</h2>
-          <p className={body}>Bilder, Texte und Effekte bewegen sich mit dem Scrollen — flüssig, auch auf dem Handy.</p>
+          <h2 className={title}>Inhalte, die zum Leben erwachen</h2>
+          <p className={body}>Bilder, Texte und Effekte reagieren auf jeden Scroll, flüssig, auch auf dem Handy.</p>
         </Stop>
 
-        <Stop index={3} eyebrow="Erinnerung">
-          <h2 className={title}>Ein Eindruck, der bleibt</h2>
-          <p className={body}>Eine interaktive Website vergisst man nicht. Genau das unterscheidet Sie von der Konkurrenz.</p>
-        </Stop>
-
-        <Stop index={4} eyebrow="Für Ihren Betrieb">
+        <Stop index={3} eyebrow="Für Ihren Betrieb">
           <h2 className={title}>
             Und Ihre Kunden sagen: <em className="text-akzent">Wow.</em>
           </h2>

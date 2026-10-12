@@ -5,7 +5,7 @@ export default function Finale() {
       <div className="sticky top-0 h-svh overflow-hidden">
         <div data-revelado-mascara className="absolute inset-0" style={{ clipPath: 'circle(8vmin at 50% 50%)' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img data-revelado-img src="/escenas/hero/5-alpen.webp" alt="Die Alpen bei Sonnenaufgang über dem Nebelmeer" loading="lazy" decoding="async" className="size-full scale-125 object-cover" />
+          <img data-revelado-img src="/escenas/hero-code/4-wow.webp" alt="Bänder aus flüssigem Gold und violettem Licht" loading="lazy" decoding="async" className="size-full scale-125 object-cover" />
           <div className="absolute inset-0 bg-linear-to-t from-noche via-noche/40 to-noche/30" />
         </div>
         <div

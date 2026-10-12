@@ -33,57 +33,55 @@ export type Tramo = {
 export const escenas: Escena[] = [
   {
     id: 'start',
-    src: '/escenas/hero/1-handy.webp',
-    alt: 'Eine Hand hält ein Smartphone, dahinter ein Schweizer Städtchen am See in der blauen Stunde',
-    lugar: 'Der Bildschirm',
-    nota: 'Alles beginnt auf einem Handy.',
+    src: '/escenas/hero-code/1-studio.webp',
+    alt: 'Ein Entwicklerstudio bei Nacht: Auf dem Bildschirm leuchtet Code, dahinter die Lichter der Stadt',
+    lugar: 'Das Studio',
+    nota: 'Alles beginnt mit Code.',
   },
   {
-    id: 'tor',
-    src: '/escenas/hero/2-tor.webp',
-    alt: 'Ein riesiges Tor aus goldenem Licht steht auf stillem, dunklem Wasser',
-    lugar: 'Das Tor',
-    nota: 'Hinter dem Bildschirm öffnet sich eine Welt.',
+    id: 'code',
+    src: '/escenas/hero-code/2-tunel.webp',
+    alt: 'Ein Tunnel aus leuchtenden Codezeilen, an seinem Ende ein Ring aus goldenem Licht',
+    lugar: 'Der Code',
+    nota: 'Zeile für Zeile, von Hand.',
   },
   {
-    id: 'galerie',
-    src: '/escenas/hero/3-galerie.webp',
-    alt: 'Eine dunkle Halle mit schwebenden, leuchtenden Bildflächen und einem runden Fenster am Ende',
-    lugar: 'Die Galerie',
-    nota: 'Inhalte, die auf jede Bewegung reagieren.',
+    id: 'leben',
+    src: '/escenas/hero-code/3-leben.webp',
+    alt: 'Schwebende Website-Elemente aus Glas, Bildern und Licht rund um ein leuchtendes Smartphone',
+    lugar: 'Die Website',
+    nota: 'Inhalte, die zum Leben erwachen.',
   },
   {
-    id: 'see',
-    src: '/escenas/hero/4-see.webp',
-    alt: 'Ein spiegelglatter Bergsee bei Sonnenaufgang mit einer schwebenden Glaskugel',
-    lugar: 'Der See',
-    nota: 'Ein Eindruck, der bleibt.',
-  },
-  {
-    id: 'alpen',
-    src: '/escenas/hero/5-alpen.webp',
-    alt: 'Die Schweizer Alpen bei Sonnenaufgang über einem Nebelmeer',
-    lugar: 'Ihre Marke',
+    id: 'wow',
+    src: '/escenas/hero-code/4-wow.webp',
+    alt: 'Bänder aus flüssigem Gold und violettem Licht, Glasformen und goldene Partikel',
+    lugar: 'Ihre Kunden',
     nota: 'Und Ihre Kunden sagen: Wow.',
   },
 ];
 
-// tramos[i] lleva de escenas[i] a escenas[i + 1]. Portales medidos sobre las imágenes reales.
+// tramos[i] lleva de escenas[i] a escenas[i + 1]. Portales medidos sobre las imágenes reales (imagenes/hero-code).
 export const tramos: Tramo[] = [
-  // Por la pantalla del móvil, que ya muestra el anillo (scripts/escenas.mjs lo coloca dentro): la pantalla crece
+  // Por la pantalla del monitor: primero se ve el código; al acercarse, dentro aparece el túnel, y la pantalla crece
   // hasta el alto de la vista y se abre. zoom = 1 / alto de la pantalla, para que encaje sin corte.
   {
-    portal: { x: 0.5013, y: 0.468, r: 0.08 },
-    llegada: { x: 0.5, y: 0.5 },
-    zoom: 1 / 0.612,
+    portal: { x: 0.5, y: 0.444, r: 0.1 },
+    llegada: { x: 0.4976, y: 0.436 },
+    zoom: 1 / 0.378,
     forma: 'pantalla',
-    pantalla: { w: 0.1615, h: 0.612, radio: 0.0227 },
-    fundido: [0, 0.02],
+    pantalla: { w: 0.397, h: 0.378, radio: 0.004 },
+    fundido: [0.25, 0.6],
   },
-  // Por el anillo de luz, a la galería: su ventana redonda aparece dentro del anillo.
-  { portal: { x: 0.4994, y: 0.4, r: 0.15 }, llegada: { x: 0.4994, y: 0.388 }, zoom: 3.2 },
-  // Por la ventana del fondo de la galería, al lago.
-  { portal: { x: 0.4994, y: 0.388, r: 0.099 }, llegada: { x: 0.5, y: 0.42 }, zoom: 4 },
-  // Por la esfera de cristal, a los Alpes.
-  { portal: { x: 0.4994, y: 0.4676, r: 0.088 }, llegada: { x: 0.5, y: 0.5 }, zoom: 4.5 },
+  // Por el anillo de luz del fondo del túnel: dentro, la web que cobra vida.
+  { portal: { x: 0.4976, y: 0.436, r: 0.057 }, llegada: { x: 0.5, y: 0.512 }, zoom: 7 },
+  // Por la pantalla del móvil: dentro, el final.
+  {
+    portal: { x: 0.5, y: 0.512, r: 0.06 },
+    llegada: { x: 0.5, y: 0.5 },
+    zoom: 1 / 0.46,
+    forma: 'pantalla',
+    pantalla: { w: 0.113, h: 0.46, radio: 0.014 },
+    fundido: [0.3, 0.6],
+  },
 ];

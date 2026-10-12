@@ -13,7 +13,7 @@ const ESQUINAS = [
 ];
 // Rectángulo que cabe entero dentro de la pantalla: hacia él vuela la cámara.
 const MONITOR = { x: 0.198, y: 0.331, w: 0.312, h: 0.279 };
-const escenas = ['1-handy', '2-tor', '3-galerie', '4-see'];
+const escenas = ['1-studio', '2-tunel', '3-leben', '4-wow'];
 
 // Fichas de código: posición en la foto (fracciones) y si se ven también en móvil.
 const fichas = [
@@ -43,7 +43,7 @@ export default function Magie() {
           >
             {escenas.map((e) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={e} src={`/escenas/hero/${e}.webp`} alt="" loading="lazy" decoding="async" />
+              <img key={e} src={`/escenas/hero-code/${e}.webp`} alt="" loading="lazy" decoding="async" />
             ))}
             <span className="absolute inset-0 bg-linear-to-br from-nieve/10 via-transparent to-transparent" />
           </div>
@@ -63,7 +63,7 @@ export default function Magie() {
         <div data-magie-voll aria-hidden="true" className="mini-portal pointer-events-none absolute inset-0 opacity-0">
           {escenas.map((e) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={e} src={`/escenas/hero/${e}.webp`} alt="" loading="lazy" decoding="async" />
+            <img key={e} src={`/escenas/hero-code/${e}.webp`} alt="" loading="lazy" decoding="async" />
           ))}
         </div>
         {/* Velo para leer el texto final sobre el monitor. */}
