@@ -219,6 +219,44 @@
   100% { opacity: 0; transform: scale(3); }
 }
 
+/* Beispiele: el teléfono y su recorrido en miniatura. Cada escena se abre en un círculo encima de la anterior y se
+   acerca despacio; la que se abre sube por encima (z-index), la anterior queda justo debajo mientras tanto y las demás, al fondo. */
+.telefon {
+  padding: 10px;
+  border-radius: 2.9rem;
+  background: linear-gradient(145deg, #2a2d3d, #0c0d16 60%, #1d2030);
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 255 255 / 0.12),
+    0 40px 80px -30px rgb(0 0 0 / 0.8),
+    0 0 90px -20px color-mix(in oklab, var(--color-akzent) 35%, transparent);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.mini-reise img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: miniReise 12s linear infinite;
+}
+
+.mini-reise img:nth-child(1) { animation-delay: -12s; }
+.mini-reise img:nth-child(2) { animation-delay: -9s; }
+.mini-reise img:nth-child(3) { animation-delay: -6s; }
+.mini-reise img:nth-child(4) { animation-delay: -3s; }
+
+@keyframes miniReise {
+  0% { z-index: 3; clip-path: circle(0% at 50% 45%); transform: scale(1.25); animation-timing-function: cubic-bezier(0.6, 0, 0.3, 1); }
+  9% { clip-path: circle(80% at 50% 45%); transform: scale(1.1); animation-timing-function: linear; }
+  24.9% { z-index: 3; }
+  25% { z-index: 2; clip-path: circle(80% at 50% 45%); transform: scale(1); }
+  49.9% { z-index: 2; }
+  50% { z-index: 1; }
+  100% { z-index: 1; clip-path: circle(80% at 50% 45%); transform: scale(1); }
+}
+
 /* Luz que sigue al ratón (solo escritorio). */
 .luz {
   opacity: 0;
@@ -268,7 +306,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mini-portal img {
+  .mini-portal img,
+  .mini-reise img {
     animation: none;
   }
 

@@ -2,6 +2,7 @@ import PortalWorld from '../components/PortalWorld';
 import Manifiesto from '../components/Manifiesto';
 import Unterschied from '../components/Unterschied';
 import Branchen from '../components/Branchen';
+import Beispiele from '../components/Beispiele';
 import Magie from '../components/Magie';
 import Ablauf from '../components/Ablauf';
 import Cinta from '../components/Cinta';
@@ -10,6 +11,7 @@ import Pie from '../components/Pie';
 
 // Cada sección tiene su propio efecto, ninguno se repite:
 // recorrido por portales · palabras que se encienden · barrido normal/interaktiv · galería horizontal con portales ·
+// móviles que se enderezan en 3D con portales en miniatura ·
 // vuelo hacia el monitor · línea que enciende pasos · cinta con inercia · anillo que se abre · letras que suben.
 export default function Home() {
   return (
@@ -28,6 +30,7 @@ export default function Home() {
         <Manifiesto />
         <Unterschied />
         <Branchen />
+        <Beispiele />
         <Magie />
         <Ablauf />
         <Cinta />

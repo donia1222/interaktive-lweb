@@ -3,6 +3,29 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
 // Animaciones de las secciones que van después del recorrido.
+// Beispiele: los dos teléfonos llegan girados en 3D (cada uno hacia su lado) y se enderezan al entrar en pantalla.
+function beispiele(reduceMotion: boolean) {
+  if (reduceMotion) return;
+  document.querySelectorAll<HTMLElement>('[data-beispiel]').forEach((b) => {
+    const telefon = b.querySelector<HTMLElement>('[data-telefon]');
+    if (!telefon) return;
+    const lado = Number(b.dataset.beispiel) === 0 ? -1 : 1;
+    gsap.fromTo(
+      telefon,
+      { rotateY: 38 * lado, rotateX: 14, rotateZ: -6 * lado, y: 120, scale: 0.86, transformPerspective: 1100 },
+      {
+        rotateY: 0,
+        rotateX: 0,
+        rotateZ: 0,
+        y: 0,
+        scale: 1,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: b, start: 'top 95%', end: 'top 35%', scrub: 0.6 },
+      },
+    );
+  });
+}
+
 export function initSecciones(reduceMotion: boolean) {
   gsap.registerPlugin(ScrollTrigger, SplitText);
   fondos();
@@ -16,6 +39,7 @@ export function initSecciones(reduceMotion: boolean) {
   manifiesto();
   unterschied();
   branchen();
+  beispiele(reduceMotion);
   magie();
   ablauf();
   cinta();
