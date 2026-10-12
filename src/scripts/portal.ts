@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { escenas, tramos } from '../data/escenas';
+import { recorrido, PANTALLA_VERTICAL } from '../data/escenas';
 
 // Recorrido por portales. Cada tramo lleva de una escena a la siguiente: la cámara se acerca al portal de la escena
 // actual (ventana, lupa, volante…) y la siguiente aparece dentro de él, crece y acaba ocupando la pantalla.
@@ -52,6 +52,7 @@ async function cargar(src: string): Promise<Fuente> {
 }
 
 export function initPortal(world: HTMLElement, reduceMotion: boolean) {
+  const { escenas, tramos } = recorrido(matchMedia(PANTALLA_VERTICAL).matches);
   const stage = world.querySelector<HTMLElement>('[data-stage]');
   const canvas = stage?.querySelector<HTMLCanvasElement>('[data-portal]');
   const ctx = canvas?.getContext('2d', { alpha: false });

@@ -86,3 +86,21 @@ export const tramos: Tramo[] = [
     fundido: [0.6, 0.92],
   },
 ];
+
+// En pantallas en vertical (móvil), la primera escena es la misma mesa con un móvil en lugar del monitor: el monitor,
+// recortado en vertical, no cabía. El resto del recorrido es igual.
+export const PANTALLA_VERTICAL = '(max-aspect-ratio: 1/1)';
+const escenaMovil: Escena = {
+  ...escenas[0],
+  src: '/escenas/hero-code/1-studio-handy.webp',
+  alt: 'Ein Smartphone auf einem Schreibtisch bei Nacht: Auf dem Bildschirm leuchtet Code, dahinter die Lichter der Stadt',
+};
+const tramoMovil: Tramo = {
+  ...tramos[0],
+  portal: { x: 0.5, y: 0.4766, r: 0.07 },
+  zoom: 1 / 0.5165,
+  pantalla: { w: 0.1495, h: 0.5165, radio: 0.012 },
+};
+
+export const recorrido = (vertical: boolean) =>
+  vertical ? { escenas: [escenaMovil, ...escenas.slice(1)], tramos: [tramoMovil, ...tramos.slice(1)] } : { escenas, tramos };

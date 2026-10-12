@@ -17,6 +17,7 @@ const imagenes = {
   'hero/4-see': 0.1,
   'hero/5-alpen': 0,
   'hero-code/1-studio': 0.2,
+  'hero-code/1-studio-handy': 0.06,
   'hero-code/2-tunel': 0.057,
   'hero-code/3-leben': 0.06,
   'hero-code/4-wow': 0,

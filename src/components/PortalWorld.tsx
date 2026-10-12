@@ -11,16 +11,20 @@ export default function PortalWorld() {
       <div data-stage className="sticky top-0 h-lvh overflow-hidden bg-noche">
         {/* Primera escena como imagen normal: se ve al instante mientras el canvas carga las demás. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          data-poster
-          src={escenas[0].src}
-          alt=""
-          aria-hidden="true"
-          width={1672}
-          height={941}
-          fetchPriority="high"
-          className="absolute inset-0 size-full scale-[1.04] object-cover transition-opacity duration-700"
-        />
+        <picture>
+          {/* En vertical, la primera escena es la del móvil (ver recorrido() en data/escenas.ts). */}
+          <source media="(max-aspect-ratio: 1/1)" srcSet="/escenas/hero-code/1-studio-handy.webp" />
+          <img
+            data-poster
+            src={escenas[0].src}
+            alt=""
+            aria-hidden="true"
+            width={1672}
+            height={941}
+            fetchPriority="high"
+            className="absolute inset-0 size-full scale-[1.04] object-cover transition-opacity duration-700"
+          />
+        </picture>
         <canvas data-portal aria-hidden="true" className="absolute inset-0 size-full opacity-0 transition-opacity duration-700" />
 
         {/* Velos: viñeta para dar profundidad y degradado inferior para leer el texto. */}
