@@ -195,8 +195,8 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
     puntero.x += (objetivo.x - puntero.x) * 0.04;
     puntero.y += (objetivo.y - puntero.y) * 0.04;
     const respira = reduceMotion ? 1.02 : 1.04 + Math.sin(time * 0.35) * 0.012;
-    // Chispas de datos en los dos primeros tramos (pantalla y túnel); en el último, la web ya está viva.
-    const hayNieve = !!nieve && tramo < 2 && !(tramo === 1 && t > 0.9);
+    // Chispas de datos durante todo el recorrido: al final quedan flotando alrededor del texto.
+    const hayNieve = !!nieve;
     if (!sucio && reduceMotion) return;
 
     // Marco 16:9 que cubre la pantalla, como object-fit: cover.
@@ -220,6 +220,31 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
     ctx.fillStyle = NOCHE;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     conCamara(ctx);
+
+    // Si la escena entrante, a su tamaño de ese momento, no llega a cubrir la abertura (la parte visible en pantalla),
+    // se agranda alrededor del punto de llegada lo justo para cubrirla. Al final del tramo ya la cubre y no cambia.
+    const cubrir = (plano: Plano, gx: number, gy: number, x0: number, y0: number, x1: number, y1: number): Plano => {
+      const bx0 = ox + plano.tx * boxW;
+      const by0 = oy + plano.ty * boxH;
+      const bx1 = bx0 + plano.k * boxW;
+      const by1 = by0 + plano.k * boxH;
+      const ax0 = Math.max(x0, -2);
+      const ay0 = Math.max(y0, -2);
+      const ax1 = Math.min(x1, W + 2);
+      const ay1 = Math.min(y1, H + 2);
+      const g = Math.max(
+        1,
+        (gx - ax0) / Math.max(1, gx - bx0),
+        (ax1 - gx) / Math.max(1, bx1 - gx),
+        (gy - ay0) / Math.max(1, gy - by0),
+        (ay1 - gy) / Math.max(1, by1 - gy),
+      );
+      if (g <= 1) return plano;
+      const k2 = plano.k * g;
+      const qx = (gx - ox) / boxW;
+      const qy = (gy - oy) / boxH;
+      return { ...plano, k: k2, tx: qx - (qx - plano.tx) * g, ty: qy - (qy - plano.ty) * g };
+    };
 
     const pintar = (img: Fuente | null, plano: Plano, c: CanvasRenderingContext2D = ctx) => {
       if (!img || plano.alpha <= 0.002) return;
@@ -270,7 +295,7 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
         if (ctx.roundRect) ctx.roundRect(x0, y0, x1 - x0, y1 - y0, radio);
         else ctx.rect(x0, y0, x1 - x0, y1 - y0);
         ctx.clip();
-        pintar(b, { ...plano, alpha: alphaB });
+        pintar(b, { ...cubrir(plano, ox + cx * boxW, oy + cy * boxH, x0, y0, x1, y1), alpha: alphaB });
         ctx.restore();
       } else {
         // Se pinta aparte y se recorta con un degradado radial que se abre al final del tramo.
@@ -280,10 +305,10 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
         actx.setTransform(1, 0, 0, 1, 0, 0);
         actx.clearRect(0, 0, aux.width, aux.height);
         conCamara(actx);
-        pintar(b, plano, actx);
         const gx = ox + (plano.tx + ki * q.x) * boxW;
         const gy = oy + (plano.ty + ki * q.y) * boxH;
         const radio = rho * ki * boxW;
+        pintar(b, cubrir(plano, gx, gy, gx - radio, gy - radio, gx + radio, gy + radio), actx);
         const g = actx.createRadialGradient(gx, gy, 0, gx, gy, radio);
         g.addColorStop(Math.max(0, Math.min(feather, 99.5) - 40) / 100, 'rgba(0,0,0,1)');
         g.addColorStop(feather / 100, 'rgba(0,0,0,0)');
@@ -303,7 +328,7 @@ export function initPortal(world: HTMLElement, reduceMotion: boolean) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const gx = ox + cx * boxW;
       const gy = oy + cy * boxH;
-      nieve(ctx, W, H, dt, tramo === 0 ? smooth(range(t, 0.15, 0.5)) : 1 - range(t, 0.6, 0.9), k, gx, gy);
+      nieve(ctx, W, H, dt, tramo === 0 ? smooth(range(t, 0.15, 0.5)) : 1, k, gx, gy);
     }
     sucio = false;
   });

@@ -82,6 +82,7 @@ export const tramos: Tramo[] = [
     zoom: 1 / 0.46,
     forma: 'pantalla',
     pantalla: { w: 0.113, h: 0.46, radio: 0.014 },
-    fundido: [0.3, 0.6],
+    // La pantalla encendida del móvil llena casi toda la vista antes de que aparezca el final: un destello de luz.
+    fundido: [0.6, 0.92],
   },
 ];
